@@ -3,7 +3,8 @@ package hr.fer.zavrsni.webApp.model;
 import java.io.Serializable;
 import javax.persistence.*;
 
-import org.hibernate.annotations.Type;
+import org.locationtech.jts.geom.Point;
+
 
 /**
  * The persistent class for the record database table.
@@ -21,10 +22,8 @@ public class SightingRecord implements Serializable {
 
 	private String description;
 
-	//not working
-	@Embedded
-	@AttributeOverrides({ @AttributeOverride(name = "location_coordinates[0]", column = @Column(name = "x")),
-			@AttributeOverride(name = "location_coordinates[1]", column = @Column(name = "y")) })
+	// not working
+	@Column(name = "location_coordinates", columnDefinition = "Point")
 	private Point locationCoordinates;
 
 	@Column(name = "location_description")

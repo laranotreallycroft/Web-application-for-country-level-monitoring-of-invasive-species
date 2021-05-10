@@ -2,6 +2,10 @@ package hr.fer.zavrsni.webApp.model;
 
 import java.io.Serializable;
 import javax.persistence.*;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import java.util.List;
 
 
@@ -24,6 +28,7 @@ public class Account implements Serializable {
 
 	//bi-directional many-to-one association to Record
 	@OneToMany(mappedBy="account")
+	@JsonBackReference
 	private List<SightingRecord> sightingRecord;
 
 	public Account() {

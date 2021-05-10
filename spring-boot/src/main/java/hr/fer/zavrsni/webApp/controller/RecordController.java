@@ -34,8 +34,6 @@ public class RecordController {
 			Map<String, String> recordMap = new HashMap<>();
 			recordMap.put("id", Integer.toString(record.getRecordId()));
 			recordMap.put("description", record.getDescription());
-			if (record.getLocationCoordinates() != null)
-				System.out.println("WOOOO");
 			recordMap.put("coordinates",
 					record.getLocationCoordinates() == null ? null : record.getLocationCoordinates().toString());
 			recordMap.put("locationDescription", record.getLocationDescription());

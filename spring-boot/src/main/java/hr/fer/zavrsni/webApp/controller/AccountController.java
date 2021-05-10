@@ -31,11 +31,10 @@ public class AccountController {
 		for (Account account : accountRepository.findAll()) {
 			Map<String, String> accountMap = new HashMap<>();
 			accountMap.put("username", account.getUsername());
-			if (account.getRecords().size() != 0)
-				System.out.println(account.getRecords().size());
-			 accountMap.put("recordCount", Integer.toString(account.getRecords().size()));
+			accountMap.put("recordCount", Integer.toString(account.getRecords().size()));
 
 			response.add(accountMap);
+
 		}
 
 		return response;
