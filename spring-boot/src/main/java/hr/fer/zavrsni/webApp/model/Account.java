@@ -24,7 +24,7 @@ public class Account implements Serializable {
 
 	//bi-directional many-to-one association to Record
 	@OneToMany(mappedBy="account")
-	private List<SightingRecord> records;
+	private List<SightingRecord> sightingRecord;
 
 	public Account() {
 	}
@@ -54,11 +54,11 @@ public class Account implements Serializable {
 	}
 
 	public List<SightingRecord> getRecords() {
-		return this.records;
+		return this.sightingRecord;
 	}
 
 	public void setRecords(List<SightingRecord> records) {
-		this.records = records;
+		this.sightingRecord = records;
 	}
 
 

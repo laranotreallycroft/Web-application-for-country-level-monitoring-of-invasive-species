@@ -1,16 +1,16 @@
 package hr.fer.zavrsni.webApp.model;
 
-import java.awt.Point;
 import java.io.Serializable;
 import javax.persistence.*;
 
+import org.hibernate.annotations.Type;
 
 /**
  * The persistent class for the record database table.
  * 
  */
 @Entity
-@Table(name="sighting_record")
+@Table(name = "sighting_record")
 @NamedQuery(name = "SightingRecord.findAll", query = "SELECT r FROM SightingRecord r")
 public class SightingRecord implements Serializable {
 	private static final long serialVersionUID = 1L;
@@ -21,28 +21,28 @@ public class SightingRecord implements Serializable {
 
 	private String description;
 
-	@Column(name = "location_coordinates")
+	//not working
+	@Embedded
+	@AttributeOverrides({ @AttributeOverride(name = "location_coordinates[0]", column = @Column(name = "x")),
+			@AttributeOverride(name = "location_coordinates[1]", column = @Column(name = "y")) })
 	private Point locationCoordinates;
 
 	@Column(name = "location_description")
 	private String locationDescription;
-	
+
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "location_id")
 	private Location location;
 
-
 	private byte[] photograph;
-	
+
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "species_id")
 	private Species species;
 
-
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne
 	@JoinColumn(name = "user_id")
 	private Account account;
-
 
 	public SightingRecord() {
 	}
@@ -100,7 +100,7 @@ public class SightingRecord implements Serializable {
 	}
 
 	public void setSpecies(Species species) {
-		this.species=species;
+		this.species = species;
 	}
 
 	public Account getUser() {

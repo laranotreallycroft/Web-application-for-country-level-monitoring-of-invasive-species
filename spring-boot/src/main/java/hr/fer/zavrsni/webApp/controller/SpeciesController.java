@@ -1,4 +1,4 @@
-/*package hr.fer.zavrsni.webApp.controller;
+package hr.fer.zavrsni.webApp.controller;
 
 
 import java.util.ArrayList;
@@ -28,7 +28,7 @@ public class SpeciesController {
 	@Autowired
 	private SpeciesRepository speciesRepository;
 
-	@GetMapping("/species")
+	@GetMapping("/species/getAll")
 	public List<Map<String, String>> getspecies() {
 		List<Map<String, String>> response = new ArrayList<>();
 		for (Species species : speciesRepository.findAll()) {
@@ -43,7 +43,7 @@ public class SpeciesController {
 
 		return response;
 	}
-
+/*
 	@RequestMapping(value = "/species/delete", method = RequestMethod.POST)
 	public Map<String, String> deleteSpecies(@RequestParam("id") UUID id) {
 		Map<String, String> response = new HashMap<>();
@@ -112,5 +112,5 @@ public class SpeciesController {
 
 		return response;
 	}
+	*/
 }
-*/

@@ -1,4 +1,4 @@
-/*package hr.fer.zavrsni.webApp.controller;
+package hr.fer.zavrsni.webApp.controller;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -25,7 +25,7 @@ public class LocationController {
 	@Autowired
 	private LocationRepository locationRepository;
 
-	@GetMapping("/location")
+	@GetMapping("/location/getAll")
 	public List<Map<String, String>> getlocations() {
 		List<Map<String, String>> response = new ArrayList<>();
 		for (Location location : locationRepository.findAll()) {
@@ -39,7 +39,7 @@ public class LocationController {
 
 		return response;
 	}
-
+/*
 	@RequestMapping(value = "/location/delete", method = RequestMethod.POST)
 	public Map<String, String> deleteLocation(@RequestParam("id") Integer id) {
 		Map<String, String> response = new HashMap<>();
@@ -108,4 +108,5 @@ public class LocationController {
 
 		return response;
 	}
-}*/
+	*/
+}

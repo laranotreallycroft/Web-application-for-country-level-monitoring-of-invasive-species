@@ -19,41 +19,42 @@ import hr.fer.zavrsni.webApp.dao.AccountRepository;
 import hr.fer.zavrsni.webApp.model.Account;
 
 @CrossOrigin(origins = "http://localhost:3000")
+@RestController
 public class AccountController {
 
 	@Autowired
 	private AccountRepository accountRepository;
 
-	@GetMapping("/accounts")
+	@GetMapping("/account/getAll")
 	public List<Map<String, String>> getAccounts() {
-		System.out.println("HERE");
 		List<Map<String, String>> response = new ArrayList<>();
 		for (Account account : accountRepository.findAll()) {
 			Map<String, String> accountMap = new HashMap<>();
 			accountMap.put("username", account.getUsername());
-			accountMap.put("recordCount", Integer.toString(account.getRecords().size()));
+			if (account.getRecords().size() != 0)
+				System.out.println(account.getRecords().size());
+			 accountMap.put("recordCount", Integer.toString(account.getRecords().size()));
 
 			response.add(accountMap);
 		}
 
 		return response;
 	}
-	
-	
+
 	@RequestMapping(value = "/delete", method = RequestMethod.POST)
 	public Map<String, String> deleteVolonter(@RequestParam("id") UUID id) {
 		Map<String, String> response = new HashMap<>();
 		Account account;
-		
+
 		try {
 			account = accountRepository.findById(id).orElseThrow();
-		} catch(NoSuchElementException | IllegalArgumentException e) {
+		} catch (NoSuchElementException | IllegalArgumentException e) {
 			response.put("message", "Ne postoji volonter sa zadanim id-om.");
 			return response;
 		}
-		
+
 		accountRepository.delete(account);
-		
+
 		response.put("message", "Volonter uspješno izbrisan.");
 		return response;
 	}
