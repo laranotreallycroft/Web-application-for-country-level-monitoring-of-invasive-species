@@ -1,4 +1,4 @@
-package hr.fer.zavrsni.webApp.controller;
+/*package hr.fer.zavrsni.webApp.controller;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -108,4 +108,4 @@ public class LocationController {
 
 		return response;
 	}
-}
+}*/

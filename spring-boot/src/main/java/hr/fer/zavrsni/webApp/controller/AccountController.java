@@ -19,7 +19,6 @@ import hr.fer.zavrsni.webApp.dao.AccountRepository;
 import hr.fer.zavrsni.webApp.model.Account;
 
 @CrossOrigin(origins = "http://localhost:3000")
-@RestController
 public class AccountController {
 
 	@Autowired
@@ -27,6 +26,7 @@ public class AccountController {
 
 	@GetMapping("/accounts")
 	public List<Map<String, String>> getAccounts() {
+		System.out.println("HERE");
 		List<Map<String, String>> response = new ArrayList<>();
 		for (Account account : accountRepository.findAll()) {
 			Map<String, String> accountMap = new HashMap<>();
@@ -40,7 +40,7 @@ public class AccountController {
 	}
 	
 	
-	@RequestMapping(value = "/account/delete", method = RequestMethod.POST)
+	@RequestMapping(value = "/delete", method = RequestMethod.POST)
 	public Map<String, String> deleteVolonter(@RequestParam("id") UUID id) {
 		Map<String, String> response = new HashMap<>();
 		Account account;

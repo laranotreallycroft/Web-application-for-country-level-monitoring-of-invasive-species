@@ -1,4 +1,4 @@
-package hr.fer.zavrsni.webApp.controller;
+/*package hr.fer.zavrsni.webApp.controller;
 
 
 import java.util.ArrayList;
@@ -113,3 +113,4 @@ public class SpeciesController {
 		return response;
 	}
 }
+*/

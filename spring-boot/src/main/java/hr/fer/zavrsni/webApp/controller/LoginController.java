@@ -1,4 +1,4 @@
-package hr.fer.zavrsni.webApp.controller;
+/*package hr.fer.zavrsni.webApp.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -34,4 +34,4 @@ public class LoginController {
 
 
 
-}
+}*/
