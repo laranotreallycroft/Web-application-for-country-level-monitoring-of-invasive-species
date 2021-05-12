@@ -8,4 +8,5 @@ import hr.fer.zavrsni.webApp.model.SpeciesGroup;
 
 public interface SpeciesGroupRepository extends CrudRepository<SpeciesGroup, UUID> {
 	public SpeciesGroup findBySpeciesGroupName(String speciesGroupName);
+	public SpeciesGroup findBySpeciesGroupId(Integer speciesGroupId);
 }

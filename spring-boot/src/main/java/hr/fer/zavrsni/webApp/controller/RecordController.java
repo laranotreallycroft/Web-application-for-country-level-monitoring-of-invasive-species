@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -30,36 +31,42 @@ public class RecordController {
 	@GetMapping("/record/getAll")
 	public List<Map<String, String>> getRecords() {
 		List<Map<String, String>> response = new ArrayList<>();
-		for (SightingRecord record : sightingRecordRepository.findAll()) {
+		for (SightingRecord sightingRecord : sightingRecordRepository.findAll()) {
 			Map<String, String> recordMap = new HashMap<>();
-			recordMap.put("id", Integer.toString(record.getRecordId()));
-			recordMap.put("description", record.getDescription());
+			recordMap.put("id", Integer.toString(sightingRecord.getRecordId()));
+			recordMap.put("description", sightingRecord.getDescription());
 			recordMap.put("coordinates",
-					record.getLocationCoordinates() == null ? null : record.getLocationCoordinates().toString());
-			recordMap.put("locationDescription", record.getLocationDescription());
-			recordMap.put("location", record.getLocationId().toString());
-			recordMap.put("speciesId", record.getSpecies().getSpeciesId().toString());
-			recordMap.put("userId", record.getUser() == null ? null : record.getUser().getUserId().toString());
+					sightingRecord.getLocationCoordinates() == null ? null : sightingRecord.getLocationCoordinates().toString());
+			recordMap.put("locationDescription", sightingRecord.getLocationDescription());
+			recordMap.put("location", sightingRecord.getLocationId().toString());
+			recordMap.put("speciesId", sightingRecord.getSpecies().getSpeciesId().toString());
+			recordMap.put("userId", sightingRecord.getUser() == null ? null : sightingRecord.getUser().getUserId().toString());
 
 			response.add(recordMap);
 		}
 
 		return response;
 	}
+
+	@PostMapping(value = "/record/delete")
+	public Map<String, String> deleteRecord(@RequestBody Map<String, Object> postObj) {
+		Map<String, String> response = new HashMap<>();
+		SightingRecord sightingRecord;
+
+		try {
+			sightingRecord = sightingRecordRepository.findByRecordId(Integer.parseInt(postObj.get("id").toString()));
+		} catch (NoSuchElementException | IllegalArgumentException e) {
+			response.put("message", "Invalid sighting record id.");
+			return response;
+		}
+
+		sightingRecordRepository.delete(sightingRecord);
+
+		response.put("message", "Sighting record successfully deleted.");
+		return response;
+	}
+
 	/*
-	 * @RequestMapping(value = "/location/delete", method = RequestMethod.POST)
-	 * public Map<String, String> deleteLocation(@RequestParam("id") Integer id) {
-	 * Map<String, String> response = new HashMap<>(); Location location;
-	 * 
-	 * try { location = locationRepository.findByLocationId(id); } catch
-	 * (NoSuchElementException | IllegalArgumentException e) {
-	 * response.put("message", "Ne postoji lokacija sa zadanim id-om."); return
-	 * response; }
-	 * 
-	 * locationRepository.delete(location);
-	 * 
-	 * response.put("message", "Lokacija uspješno izbrisana."); return response; }
-	 * 
 	 * @PostMapping("/location/insert") public Map<String, String>
 	 * addLocation(@RequestParam("name") String name, @RequestParam("county") String
 	 * county) { Map<String, String> response = new HashMap<>();
@@ -75,6 +82,8 @@ public class RecordController {
 	 * response.put("message", "Mjesto uspješno dodano!");
 	 * 
 	 * return response; }
+	 * 
+	 * /*
 	 * 
 	 * @PostMapping("/location/edit") public Map<String, String>
 	 * editLocation(@RequestParam("id") Integer id,@RequestParam("name") String

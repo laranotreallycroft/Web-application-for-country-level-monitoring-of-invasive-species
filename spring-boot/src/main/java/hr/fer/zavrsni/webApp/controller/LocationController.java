@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -39,25 +40,25 @@ public class LocationController {
 
 		return response;
 	}
-/*
-	@RequestMapping(value = "/location/delete", method = RequestMethod.POST)
-	public Map<String, String> deleteLocation(@RequestParam("id") Integer id) {
+
+	@PostMapping(value = "/location/delete")
+	public Map<String, String> deleteLocation(@RequestBody Map<String, Object> postObj) {
 		Map<String, String> response = new HashMap<>();
 		Location location;
 
 		try {
-			location = locationRepository.findByLocationId(id);
+			location = locationRepository.findByLocationId(Integer.parseInt(postObj.get("id").toString()));
 		} catch (NoSuchElementException | IllegalArgumentException e) {
-			response.put("message", "Ne postoji lokacija sa zadanim id-om.");
+			response.put("message", "Invalid location id.");
 			return response;
 		}
 
 		locationRepository.delete(location);
 
-		response.put("message", "Lokacija uspješno izbrisana.");
+		response.put("message", "Location successfully deleted.");
 		return response;
 	}
-
+/*
 	@PostMapping("/location/insert")
 	public Map<String, String> addLocation(@RequestParam("name") String name, @RequestParam("county") String county) {
 		Map<String, String> response = new HashMap<>();

@@ -32,7 +32,7 @@ public class AccountService implements UserDetailsService {
 		account = this.accountRepository.findByUsername(username);
 		if (account == null) {
 			
-					System.out.println("User not found! " + username);
+					System.out.println("User not found! ");
 					throw new UsernameNotFoundException("User " + username + " was not found in the database");
 				}else
 				roleNames.add("ROLE_KORISNIK");
