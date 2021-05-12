@@ -8,30 +8,36 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import java.util.List;
 
-
 /**
  * The persistent class for the account database table.
  * 
  */
 @Entity
-@NamedQuery(name="Account.findAll", query="SELECT a FROM Account a")
+@NamedQuery(name = "Account.findAll", query = "SELECT a FROM Account a")
 public class Account implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@Column(name="user_id")
+	@Column(name = "user_id")
 	private Integer userId;
 
 	private String password;
 
 	private String username;
 
-	//bi-directional many-to-one association to Record
-	@OneToMany(mappedBy="account")
+	// bi-directional many-to-one association to Record
+	@OneToMany(mappedBy = "account")
 	@JsonBackReference
 	private List<SightingRecord> sightingRecord;
 
 	public Account() {
+	}
+
+	public Account(Integer userId, String username, String password) {
+		this.userId = userId;
+		this.username = username;
+		this.password = password;
+
 	}
 
 	public Integer getUserId() {
@@ -65,7 +71,5 @@ public class Account implements Serializable {
 	public void setRecords(List<SightingRecord> records) {
 		this.sightingRecord = records;
 	}
-
-
 
 }

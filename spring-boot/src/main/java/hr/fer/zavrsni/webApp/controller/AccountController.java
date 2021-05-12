@@ -62,4 +62,28 @@ public class AccountController {
 		response.put("message", "Account successfully deleted.");
 		return response;
 	}
+
+	@PostMapping(value = "/account/create")
+	public Map<String, String> createAccount(@RequestBody Map<String, Object> postObj) {
+
+		Map<String, String> response = new HashMap<>();
+		Account account;
+
+		try {
+			account = accountRepository.findByUsername(postObj.get("username").toString());
+
+		} catch (NoSuchElementException | IllegalArgumentException e) {
+			response.put("message", "Some error?");
+			return response;
+		}
+		if (account != null)
+			throw new IllegalArgumentException("Account with this username already exists. Please choose another one.");
+		System.out.println("HERE");
+		Integer lastId = accountRepository.findFirstByOrderByUserIdDesc().getUserId();
+		Account newAccount = new Account(lastId + 1, postObj.get("username").toString(),
+				postObj.get("password").toString());
+		accountRepository.save(newAccount);
+		response.put("message", "Account successfully created.");
+		return response;
+	}
 }
