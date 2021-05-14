@@ -9,4 +9,5 @@ import hr.fer.zavrsni.webApp.model.Species;
 public interface SpeciesRepository extends CrudRepository<Species, UUID> {
 	public Species findBySpeciesName(String speciesName);
 	public Species findBySpeciesId(Integer speciesId);
+	public Species findFirstByOrderBySpeciesIdDesc();
 }

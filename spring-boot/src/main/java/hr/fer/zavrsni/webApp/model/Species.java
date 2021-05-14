@@ -1,41 +1,63 @@
 package hr.fer.zavrsni.webApp.model;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import javax.persistence.*;
-import java.util.List;
 
+import java.util.Base64;
+import java.util.List;
 
 /**
  * The persistent class for the species database table.
  * 
  */
 @Entity
-@Table(name="species")
-@NamedQuery(name="Species.findAll", query="SELECT s FROM Species s")
+@Table(name = "species")
+@NamedQuery(name = "Species.findAll", query = "SELECT s FROM Species s")
 public class Species implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@Column(name="species_id")
+	@Column(name = "species_id")
 	private Integer speciesId;
+
+	@Column(name = "species_name")
+	private String speciesName;
+
+	// bi-directional many-to-one association to SpeciesGroup
+	@ManyToOne
+	@JoinColumn(name = "species_group_id")
+	private SpeciesGroup speciesGroup;
 
 	private String description;
 
 	private byte[] photograph;
 
-	@Column(name="species_name")
-	private String speciesName;
-
-	//bi-directional many-to-one association to Record
-	@OneToMany(mappedBy="species")
+	// bi-directional many-to-one association to Record
+	@OneToMany(mappedBy = "species")
 	private List<SightingRecord> records;
 
-	//bi-directional many-to-one association to SpeciesGroup
-	@ManyToOne
-	@JoinColumn(name="species_group_id")
-	private SpeciesGroup speciesGroup;
-
 	public Species() {
+
+	}
+
+	public Species(Integer speciesId, String speciesName, SpeciesGroup speciesGroup, String description,
+			Object photograph) {
+		this.speciesId = speciesId;
+		this.speciesName = speciesName;
+		this.speciesGroup = speciesGroup;
+		this.description = description;
+
+		try {
+			this.photograph = Base64.getDecoder().decode(photograph.toString().getBytes("UTF-8"));
+
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 	}
 
 	public Integer getSpeciesId() {

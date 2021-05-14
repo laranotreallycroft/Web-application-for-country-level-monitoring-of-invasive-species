@@ -1,6 +1,5 @@
 package hr.fer.zavrsni.webApp.controller;
 
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -19,7 +18,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import hr.fer.zavrsni.webApp.dao.SpeciesGroupRepository;
 import hr.fer.zavrsni.webApp.dao.SpeciesRepository;
+import hr.fer.zavrsni.webApp.model.Account;
 import hr.fer.zavrsni.webApp.model.Species;
 
 @CrossOrigin(origins = "http://localhost:3000")
@@ -28,6 +29,9 @@ public class SpeciesController {
 
 	@Autowired
 	private SpeciesRepository speciesRepository;
+
+	@Autowired
+	private SpeciesGroupRepository speciesGroupRepository;
 
 	@GetMapping("/species/getAll")
 	public List<Map<String, String>> getspecies() {
@@ -62,56 +66,51 @@ public class SpeciesController {
 		response.put("message", "Species successfully deleted.");
 		return response;
 	}
-/*
-	@PostMapping("/species/insert")
-	public Map<String, String> addSpecies(@RequestParam("name") String name, @RequestParam("groupName") String groupName) {
+
+	@PostMapping(value = "/species/create")
+	public Map<String, String> createSpecies(@RequestBody Map<String, Object> postObj) {
+
 		Map<String, String> response = new HashMap<>();
-
-		if (speciesRepository.findBySpeciesName(name) != null) {
-			response.put("message", "Već postoji mjesto sa upisanim imenom!");
-
-			return response;
-		}
+		Species species;
 
 		try {
-		//	Species species = new Species(name, groupName);
-		//	speciesRepository.save(species);
-		} catch (Exception e) {
-			response.put("message", "Uneseni podatci nisu ispravni!");
+			species = speciesRepository.findBySpeciesName(postObj.get("speciesName").toString());
+
+		} catch (NoSuchElementException | IllegalArgumentException e) {
+			response.put("message", "Some error?");
 			return response;
 		}
-
-		response.put("message", "Mjesto uspješno dodano!");
-
+		if (species != null)
+			throw new IllegalArgumentException("Species with this name already exists. Please choose another one.");
+		Integer lastId = speciesRepository.findFirstByOrderBySpeciesIdDesc().getSpeciesId();
+		Species newSpecies = new Species(lastId + 1, postObj.get("speciesName").toString(),
+				speciesGroupRepository.findBySpeciesGroupName(postObj.get("speciesGroup").toString()),
+				postObj.get("description").toString(),postObj.get("photograph"));
+		speciesRepository.save(newSpecies);
+		response.put("message", "Account successfully created.");
 		return response;
 	}
-
-	@PostMapping("/species/edit")
-	public Map<String, String> editSpecies(@RequestParam("id") UUID id) {
-		Map<String, String> response = new HashMap<>();
-
-		Optional<Species> species;
-
-		try {
-			species = speciesRepository.findById(id);
-		} catch (NoSuchElementException | IllegalArgumentException ex) {
-			response.put("message", "Ne postoji mjesto sa predanim imenom");
-
-			return response;
-		}
-
-		try {
-		//	species.setName(name);
-		//	species.setCounty(county);
-		//	speciesRepository.save(species);
-		} catch (Exception e) {
-			response.put("message", "Promijenjeni podatci nisu ispravni!");
-			return response;
-		}
-
-		response.put("message", "Mjesto uspješno izmjenjeno!");
-
-		return response;
-	}
-	*/
+	/*
+	 * 
+	 * @PostMapping("/species/edit") public Map<String, String>
+	 * editSpecies(@RequestParam("id") UUID id) { Map<String, String> response = new
+	 * HashMap<>();
+	 * 
+	 * Optional<Species> species;
+	 * 
+	 * try { species = speciesRepository.findById(id); } catch
+	 * (NoSuchElementException | IllegalArgumentException ex) {
+	 * response.put("message", "Ne postoji mjesto sa predanim imenom");
+	 * 
+	 * return response; }
+	 * 
+	 * try { // species.setName(name); // species.setCounty(county); //
+	 * speciesRepository.save(species); } catch (Exception e) {
+	 * response.put("message", "Promijenjeni podatci nisu ispravni!"); return
+	 * response; }
+	 * 
+	 * response.put("message", "Mjesto uspješno izmjenjeno!");
+	 * 
+	 * return response; }
+	 */
 }
