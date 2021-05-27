@@ -8,4 +8,5 @@ import hr.fer.zavrsni.webApp.model.SightingRecord;
 
 public interface SightingRecordRepository extends CrudRepository<SightingRecord, UUID> {
 	public SightingRecord findByRecordId(Integer recordId);
+	public SightingRecord findFirstByOrderByRecordIdDesc();
 }

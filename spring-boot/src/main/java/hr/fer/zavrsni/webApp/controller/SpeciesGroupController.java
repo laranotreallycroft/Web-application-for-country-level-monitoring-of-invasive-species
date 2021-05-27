@@ -42,21 +42,67 @@ public class SpeciesGroupController {
 		return response;
 	}
 	
+
+	@PostMapping(value = "/speciesGroup/getSpecies")
+	public List<Map<String, String>> getSpecies(@RequestBody Map<String, Object> postObj) {
+		List<Map<String, String>> response = new ArrayList<>();
+		SpeciesGroup speciesGroup;
+
+		try {
+			speciesGroup = speciesGroupRepository.findBySpeciesGroupName(postObj.get("speciesGroup").toString());
+		} catch (NoSuchElementException | IllegalArgumentException e) {
+			return response;
+		}
+
+		for (Species species : speciesGroup.getSpecies()) {
+			Map<String, String> speciesMap = new HashMap<>();
+			speciesMap.put("id", Integer.toString(species.getSpeciesId()));
+			speciesMap.put("name", species.getSpeciesName());
+
+			response.add(speciesMap);
+		}
+
+		return response;
+	}
+	
+	
 	@PostMapping(value = "/speciesGroup/delete")
 	public Map<String, String> deleteSpecies(@RequestBody Map<String, Object> postObj) {
 		Map<String, String> response = new HashMap<>();
-		SpeciesGroup species;
+		SpeciesGroup speciesGroup;
 
 		try {
-			species = speciesGroupRepository.findBySpeciesGroupId(Integer.parseInt(postObj.get("id").toString()));
+			speciesGroup = speciesGroupRepository.findBySpeciesGroupId(Integer.parseInt(postObj.get("id").toString()));
 		} catch (NoSuchElementException | IllegalArgumentException e) {
 			response.put("message", "Invalid species group id.");
 			return response;
 		}
 
-		speciesGroupRepository.delete(species);
+		speciesGroupRepository.delete(speciesGroup);
 
 		response.put("message", "Species group successfully deleted.");
+		return response;
+	}
+	
+	@PostMapping(value = "/speciesGroup/create")
+	public Map<String, String> createSpeciesGroup(@RequestBody Map<String, Object> postObj) {
+
+		Map<String, String> response = new HashMap<>();
+		SpeciesGroup speciesGroup;
+
+		try {
+			speciesGroup = speciesGroupRepository.findBySpeciesGroupName(postObj.get("speciesGroupName").toString());
+
+		} catch (NoSuchElementException | IllegalArgumentException e) {
+			response.put("message", "Some error?");
+			return response;
+		}
+		if (speciesGroup != null)
+			throw new IllegalArgumentException("Species group with this name already exists. Please choose another one.");
+		Integer lastId = speciesGroupRepository.findFirstByOrderBySpeciesGroupIdDesc().getSpeciesGroupId();
+		SpeciesGroup newSpeciesGroup = new SpeciesGroup(lastId + 1, postObj.get("speciesGroupName").toString());
+		speciesGroupRepository.save(newSpeciesGroup);
+		response.put("message", "Species group successfully created.");
 		return response;
 	}
 }

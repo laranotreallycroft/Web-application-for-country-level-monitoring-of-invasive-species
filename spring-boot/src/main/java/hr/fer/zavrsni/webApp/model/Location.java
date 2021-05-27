@@ -29,10 +29,11 @@ public class Location implements Serializable {
 	public Location() {
 	}
 
-	public Location(String name, String county) {
+	public Location(int locationId,String name, String county) {
+		this.locationId=locationId;
 		this.name=name;
 		this.county=county;
-	//	this.locationId=;
+	
 	}
 
 	public Integer getLocationId() {

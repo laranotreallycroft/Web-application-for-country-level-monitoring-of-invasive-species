@@ -16,10 +16,13 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import hr.fer.zavrsni.webApp.dao.AccountRepository;
 import hr.fer.zavrsni.webApp.dao.LocationRepository;
 import hr.fer.zavrsni.webApp.dao.SightingRecordRepository;
+import hr.fer.zavrsni.webApp.dao.SpeciesRepository;
 import hr.fer.zavrsni.webApp.model.Location;
 import hr.fer.zavrsni.webApp.model.SightingRecord;
+import hr.fer.zavrsni.webApp.model.Species;
 
 @CrossOrigin(origins = "http://localhost:3000")
 @RestController
@@ -28,6 +31,15 @@ public class RecordController {
 	@Autowired
 	private SightingRecordRepository sightingRecordRepository;
 
+	@Autowired
+	private LocationRepository locationRepository;
+
+	@Autowired
+	private SpeciesRepository speciesRepository;
+
+	@Autowired
+	private AccountRepository accountRepository;
+
 	@GetMapping("/record/getAll")
 	public List<Map<String, String>> getRecords() {
 		List<Map<String, String>> response = new ArrayList<>();
@@ -35,12 +47,13 @@ public class RecordController {
 			Map<String, String> recordMap = new HashMap<>();
 			recordMap.put("id", Integer.toString(sightingRecord.getRecordId()));
 			recordMap.put("description", sightingRecord.getDescription());
-			recordMap.put("coordinates",
-					sightingRecord.getLocationCoordinates() == null ? null : sightingRecord.getLocationCoordinates().toString());
+			recordMap.put("coordinates", sightingRecord.getLocationCoordinates() == null ? null
+					: sightingRecord.getLocationCoordinates().toString());
 			recordMap.put("locationDescription", sightingRecord.getLocationDescription());
 			recordMap.put("location", sightingRecord.getLocationId().toString());
 			recordMap.put("speciesId", sightingRecord.getSpecies().getSpeciesId().toString());
-			recordMap.put("userId", sightingRecord.getUser() == null ? null : sightingRecord.getUser().getUserId().toString());
+			recordMap.put("userId",
+					sightingRecord.getUser() == null ? null : sightingRecord.getUser().getUserId().toString());
 
 			response.add(recordMap);
 		}
@@ -66,25 +79,23 @@ public class RecordController {
 		return response;
 	}
 
+	@PostMapping(value = "/record/create")
+	public Map<String, String> createRecord(@RequestBody Map<String, Object> postObj) {
+
+		Map<String, String> response = new HashMap<>();
+
+		Integer lastId = sightingRecordRepository.findFirstByOrderByRecordIdDesc().getRecordId();
+		SightingRecord newSightingRecord = new SightingRecord(lastId + 1, postObj.get("description").toString(), null,
+				postObj.get("locationDescription").toString(),
+				locationRepository.findByName(postObj.get("location").toString()),
+				postObj.get("photograph").toString().getBytes(),
+				speciesRepository.findBySpeciesName(postObj.get("species").toString()), null);
+		sightingRecordRepository.save(newSightingRecord);
+		response.put("message", "Sighting record successfully created.");
+		return response;
+	}
+
 	/*
-	 * @PostMapping("/location/insert") public Map<String, String>
-	 * addLocation(@RequestParam("name") String name, @RequestParam("county") String
-	 * county) { Map<String, String> response = new HashMap<>();
-	 * 
-	 * Location location = locationRepository.findByName(name); if (location != null
-	 * && location.getCounty().equals(county)) { response.put("message",
-	 * "Već postoji ovo mjesto!"); return response; }
-	 * 
-	 * try { location = new Location(name, county);
-	 * locationRepository.save(location); } catch (Exception e) {
-	 * response.put("message", "Uneseni podatci nisu ispravni!"); return response; }
-	 * 
-	 * response.put("message", "Mjesto uspješno dodano!");
-	 * 
-	 * return response; }
-	 * 
-	 * /*
-	 * 
 	 * @PostMapping("/location/edit") public Map<String, String>
 	 * editLocation(@RequestParam("id") Integer id,@RequestParam("name") String
 	 * name,@RequestParam("county") String county) { Map<String, String> response =

@@ -28,6 +28,10 @@ public class SpeciesGroup implements Serializable {
 
 	public SpeciesGroup() {
 	}
+	public SpeciesGroup(int id, String speciesGroupName) {
+		this.speciesGroupId=id;
+		this.speciesGroupName=speciesGroupName;
+	}
 
 	public Integer getSpeciesGroupId() {
 		return this.speciesGroupId;

@@ -87,7 +87,7 @@ public class SpeciesController {
 				speciesGroupRepository.findBySpeciesGroupName(postObj.get("speciesGroup").toString()),
 				postObj.get("description").toString(),postObj.get("photograph"));
 		speciesRepository.save(newSpecies);
-		response.put("message", "Account successfully created.");
+		response.put("message", "Species successfully created.");
 		return response;
 	}
 	/*

@@ -5,7 +5,6 @@ import javax.persistence.*;
 
 import org.locationtech.jts.geom.Point;
 
-
 /**
  * The persistent class for the record database table.
  * 
@@ -44,6 +43,18 @@ public class SightingRecord implements Serializable {
 	private Account account;
 
 	public SightingRecord() {
+	}
+
+	public SightingRecord(int recordId, String description, Point locationCoordinates, String locationDescription,
+			Location location, byte[] photograph, Species species,Account account) {
+		this.recordId=recordId;
+		this.description=description;
+		this.locationCoordinates=locationCoordinates;
+		this.locationDescription=locationDescription;
+		this.location=location;
+		this.photograph=photograph;
+		this.species=species;
+		this.account=account;
 	}
 
 	public Integer getRecordId() {
