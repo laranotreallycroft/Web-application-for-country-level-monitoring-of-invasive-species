@@ -20,7 +20,7 @@ export default function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator>
-        <Stack.Screen name="Home" component={homeScreen} />
+        <Stack.Screen name="Home" component={createSightingRecordScreen} />
         <Stack.Screen name="Login" component={loginScreen} />
         <Stack.Screen name="Admin" component={adminScreen} />
 

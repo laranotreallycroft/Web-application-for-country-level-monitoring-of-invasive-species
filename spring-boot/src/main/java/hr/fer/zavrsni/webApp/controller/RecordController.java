@@ -6,6 +6,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.Point;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -37,14 +40,12 @@ public class RecordController {
 	@Autowired
 	private SpeciesRepository speciesRepository;
 
-	@Autowired
-	private AccountRepository accountRepository;
-
 	@GetMapping("/record/getAll")
 	public List<Map<String, String>> getRecords() {
 		List<Map<String, String>> response = new ArrayList<>();
 		for (SightingRecord sightingRecord : sightingRecordRepository.findAll()) {
 			Map<String, String> recordMap = new HashMap<>();
+
 			recordMap.put("id", Integer.toString(sightingRecord.getRecordId()));
 			recordMap.put("description", sightingRecord.getDescription());
 			recordMap.put("coordinates", sightingRecord.getLocationCoordinates() == null ? null
@@ -83,15 +84,25 @@ public class RecordController {
 	public Map<String, String> createRecord(@RequestBody Map<String, Object> postObj) {
 
 		Map<String, String> response = new HashMap<>();
-
 		Integer lastId = sightingRecordRepository.findFirstByOrderByRecordIdDesc().getRecordId();
-		SightingRecord newSightingRecord = new SightingRecord(lastId + 1, postObj.get("description").toString(), null,
+
+		Point pt = null;
+		if (postObj.get("coordinatesLat") != null) {
+			System.out.println("NOT NULL");
+			GeometryFactory fac = new GeometryFactory();
+			double lat = (Double) (postObj.get("coordinatesLat"));
+			double lon = (Double) (postObj.get("coordinatesLon"));
+			pt = fac.createPoint(new Coordinate(lat, lon));
+		}
+
+		SightingRecord newSightingRecord = new SightingRecord(lastId + 1, postObj.get("description").toString(), pt,
 				postObj.get("locationDescription").toString(),
 				locationRepository.findByName(postObj.get("location").toString()),
 				postObj.get("photograph").toString().getBytes(),
 				speciesRepository.findBySpeciesName(postObj.get("species").toString()), null);
 		sightingRecordRepository.save(newSightingRecord);
 		response.put("message", "Sighting record successfully created.");
+
 		return response;
 	}
 

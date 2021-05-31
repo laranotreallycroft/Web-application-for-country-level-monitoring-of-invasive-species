@@ -2,9 +2,11 @@ import { StatusBar } from 'expo-status-bar';
 import React, { useState, useEffect } from 'react';
 import { Button, StyleSheet, Text, TextInput, View, TouchableOpacity } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
+import MapView, { Marker } from 'react-native-maps';
 import axios from "axios";
 import _, { map } from 'underscore';
 import * as ImagePicker from 'expo-image-picker';
+import symbolicateStackTrace from 'react-native/Libraries/Core/Devtools/symbolicateStackTrace';
 export default function createSightingRecordScreen(props) {
 
     const [description, setDescription] = useState("");
@@ -19,6 +21,8 @@ export default function createSightingRecordScreen(props) {
     const [location, setLocation] = useState([]);
     const [locationData, setLocationData] = useState([]);
     const [countyData, setCountyData] = useState([]);
+
+    const [marker, setMarker] = useState();
 
     useEffect(() => {
         const endpoint = "http://10.0.2.2:8080/speciesGroup/getAll";
@@ -44,8 +48,8 @@ export default function createSightingRecordScreen(props) {
 
     }, []);
 
+
     const handleSelectSpeciesGroup = (speciesGroup) => {
-        console.log(speciesGroup)
         const group_object = {
             speciesGroup: speciesGroup
         };
@@ -66,7 +70,6 @@ export default function createSightingRecordScreen(props) {
         const group_object = {
             county: county
         };
-        console.log(county)
         const endpoint = "http://10.0.2.2:8080/county/getLocations";
         axios.post(endpoint, group_object).then(res => {
             setLocationData(res.data)
@@ -132,14 +135,30 @@ export default function createSightingRecordScreen(props) {
         }
         const endpoint = "http://10.0.2.2:8080/record/create";
 
-        const species_object = {
+
+        if (marker == null)
+
+            var species_object = {
+                description: description,
+                locationDescription: locationDescription,
+                photograph: photograph,
+                species: species,
+                location: location,
+                coordinatesLat: null,
+                coordinatesLon: null
+            };
+
+        else var species_object = {
             description: description,
             locationDescription: locationDescription,
             photograph: photograph,
             species: species,
             location: location,
-            coordinates: ""
+            coordinatesLat: marker.latitude,
+            coordinatesLon: marker.longitude
         };
+
+
 
 
         axios.post(endpoint, species_object).then(res => {
@@ -147,7 +166,7 @@ export default function createSightingRecordScreen(props) {
 
         }).catch((error) => {
             console.log(error)
-            alert("Sighting record create failure! Species group with this name already exists!");
+            alert("Sighting record create failure!");
         });
 
 
@@ -221,6 +240,18 @@ export default function createSightingRecordScreen(props) {
                     })
                 }
             </Picker>
+
+            <MapView style={styles.map} initialRegion={{
+                latitude: 45.1,
+                longitude: 16.5,
+                latitudeDelta: 2,
+                longitudeDelta: 2,
+            }}
+                onPress={(e) => setMarker(e.nativeEvent.coordinate)}>
+                {marker != null && <Marker coordinate={marker} />}
+
+
+            </MapView>
             <Button
                 style={styles.button}
                 title="Add new sighting record"
@@ -246,5 +277,8 @@ const styles = StyleSheet.create({
         margin: 12,
         borderWidth: 1,
 
+    }, map: {
+        height: 200
+        //Dimensions.get('window').height,
     }
 });
