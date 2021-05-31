@@ -13,6 +13,7 @@ import createSpeciesScreen from './app/screens/createScreens/createSpeciesScreen
 import createSpeciesGroupScreen from './app/screens/createScreens/createSpeciesGroupScreen';
 import createLocationScreen from './app/screens/createScreens/createLocationScreen';
 import createSightingRecordScreen from './app/screens/createScreens/createSightingRecordScreen';
+import createCountyScreen from './app/screens/createScreens/createCountyScreen';
 
 export default function App() {
   const Stack = createStackNavigator();
@@ -24,6 +25,7 @@ export default function App() {
         <Stack.Screen name="Admin" component={adminScreen} />
 
         <Stack.Screen name="CreateAccount" component={createAccountScreen} />
+        <Stack.Screen name="CreateCounty" component={createCountyScreen} />
         <Stack.Screen name="CreateLocation" component={createLocationScreen} />
         <Stack.Screen name="CreateSightingRecord" component={createSightingRecordScreen} />
         <Stack.Screen name="CreateSpeciesGroup" component={createSpeciesGroupScreen} />

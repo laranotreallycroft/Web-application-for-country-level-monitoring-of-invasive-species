@@ -13,12 +13,11 @@ export default function createLocationScreen(props) {
 
 
     useEffect(() => {
-        const endpoint = "http://10.0.2.2:8080/location/getAll";
+        const endpoint = "http://10.0.2.2:8080/county/getAll";
         axios.get(endpoint).then(res => {
-            var i = res.data
-            var j = _.keys(_.countBy(i, function (i) { return i.county; }))
-            j.sort()
-            setCountyData(j)
+
+            res.data.sort((a, b) => (a.name > b.name) ? 1 : -1)
+            setCountyData(res.data)
 
 
         }).catch((error) => {
@@ -79,7 +78,7 @@ export default function createLocationScreen(props) {
             >
                 {
                     countyData.map((prop, key) => {
-                        return <Picker.Item label={prop} value={prop} key={prop} />;
+                        return <Picker.Item label={prop.name} value={prop.name} key={prop.id} />;
                     })
                 }
             </Picker>

@@ -21,7 +21,6 @@ public class SightingRecord implements Serializable {
 
 	private String description;
 
-	// not working
 	@Column(name = "location_coordinates", columnDefinition = "Point")
 	private Point locationCoordinates;
 

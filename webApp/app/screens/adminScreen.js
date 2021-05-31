@@ -40,6 +40,7 @@ export default function adminScreen({ navigation }) {
 
 
         axios.get(endpoint).then(res => {
+            res.data.sort((a, b) => (a.name > b.name) ? 1 : -1)
             console.log(res.data)
             setData(res.data)
             setDataset("Species")
@@ -56,9 +57,31 @@ export default function adminScreen({ navigation }) {
 
 
         axios.get(endpoint).then(res => {
+            res.data.sort((a, b) => (a.name > b.name) ? 1 : -1)
             console.log(res.data)
             setData(res.data)
             setDataset("Species Group")
+
+        }).catch((error) => {
+            alert(error)
+            console.log(error)
+            alert("Data get failure");
+        });
+    }
+
+    const getCountyData = () => {
+
+        const endpoint = "http://10.0.2.2:8080/county/getAll";
+
+
+
+        axios.get(endpoint).then(res => {
+
+            res.data.sort((a, b) => (a.name > b.name) ? 1 : -1)
+            console.log(res.data)
+            setData(res.data)
+            setDataset("County")
+
 
         }).catch((error) => {
             alert(error)
@@ -74,6 +97,8 @@ export default function adminScreen({ navigation }) {
 
 
         axios.get(endpoint).then(res => {
+
+            res.data.sort((a, b) => (a.name > b.name) ? 1 : -1)
             console.log(res.data)
             setData(res.data)
             setDataset("Location")
@@ -88,8 +113,6 @@ export default function adminScreen({ navigation }) {
 
     const getRecordData = () => {
         const endpoint = "http://10.0.2.2:8080/record/getAll";
-
-
 
         axios.get(endpoint).then(res => {
             console.log(res.data)
@@ -117,6 +140,9 @@ export default function adminScreen({ navigation }) {
             case ("Species Group"):
                 endpoint = "http://10.0.2.2:8080/speciesGroup/delete";
                 break;
+            case ("County"):
+                endpoint = "http://10.0.2.2:8080/county/delete";
+                break;
             case ("Location"):
                 endpoint = "http://10.0.2.2:8080/location/delete";
                 break;
@@ -139,6 +165,9 @@ export default function adminScreen({ navigation }) {
                     break;
                 case ("Species Group"):
                     getSpeciesGroupData()
+                    break;
+                case ("County"):
+                    getCountyData()
                     break;
                 case ("Location"):
                     getLocationData()
@@ -220,6 +249,11 @@ export default function adminScreen({ navigation }) {
                 title="get Species Group data"
                 color='#EA7D55'
                 onPress={getSpeciesGroupData}
+            />
+            <Button
+                title="get County data"
+                color='#EA7D55'
+                onPress={getCountyData}
             />
             <Button
                 title="get Location data"

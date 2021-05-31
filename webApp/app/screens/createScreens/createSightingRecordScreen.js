@@ -29,12 +29,10 @@ export default function createSightingRecordScreen(props) {
             console.log(error)
             alert("Data get failure");
         });
-        var endpoint2 = "http://10.0.2.2:8080/location/getAll";
+        var endpoint2 = "http://10.0.2.2:8080/county/getAll";
         axios.get(endpoint2).then(res => {
-            var i = res.data
-            var j = _.keys(_.countBy(i, function (i) { return i.county; }))
-            j.sort()
-            setCountyData(j)
+            res.data.sort((a, b) => (a.name > b.name) ? 1 : -1)
+            setCountyData(res.data)
 
 
         }).catch((error) => {
@@ -69,7 +67,7 @@ export default function createSightingRecordScreen(props) {
             county: county
         };
         console.log(county)
-        const endpoint = "http://10.0.2.2:8080/location/getFromCounty";
+        const endpoint = "http://10.0.2.2:8080/county/getLocations";
         axios.post(endpoint, group_object).then(res => {
             setLocationData(res.data)
 
@@ -206,7 +204,7 @@ export default function createSightingRecordScreen(props) {
             >
                 {
                     countyData.map((prop, key) => {
-                        return <Picker.Item label={prop} value={prop} key={prop} />;
+                        return <Picker.Item label={prop.name} value={prop.name} key={prop.id} />;
                     })
                 }
             </Picker>

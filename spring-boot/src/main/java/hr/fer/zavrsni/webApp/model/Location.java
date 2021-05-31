@@ -18,7 +18,9 @@ public class Location implements Serializable {
 	@Column(name="location_id")
 	private Integer locationId;
 
-	private String county;
+	@ManyToOne
+	@JoinColumn(name = "county_id")
+	private County county;
 
 	private String name;
 
@@ -29,7 +31,7 @@ public class Location implements Serializable {
 	public Location() {
 	}
 
-	public Location(int locationId,String name, String county) {
+	public Location(int locationId,String name, County county) {
 		this.locationId=locationId;
 		this.name=name;
 		this.county=county;
@@ -44,11 +46,11 @@ public class Location implements Serializable {
 		this.locationId = locationId;
 	}
 
-	public String getCounty() {
+	public County getCounty() {
 		return this.county;
 	}
 
-	public void setCounty(String county) {
+	public void setCounty(County county) {
 		this.county = county;
 	}
 
