@@ -2,20 +2,16 @@ package hr.fer.zavrsni.webApp.controller;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
-import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import hr.fer.zavrsni.webApp.dao.AccountRepository;
@@ -41,6 +37,42 @@ public class AccountController {
 			response.add(accountMap);
 
 		}
+
+		return response;
+	}
+
+	@GetMapping("/account/getTop3")
+	public List<Map<String, String>> getTop3Accounts() {
+		List<Map<String, String>> response = new ArrayList<>();
+		List<Account> accountList = new LinkedList<>();
+		for (Account account : accountRepository.findAll()) {
+			accountList.add(account);
+		}
+		accountList.sort((o1, o2) ->  o2.getRecords().size()-o1.getRecords().size());
+		for (int i = 0; i < 3; i++) {
+			Map<String, String> accountMap = new HashMap<>();
+			accountMap.put("username", accountList.get(i).getUsername());
+			accountMap.put("recordCount", Integer.toString(accountList.get(i).getRecords().size()));
+			response.add(accountMap);
+		}
+		return response;
+	}
+
+	@PostMapping(value = "/account/getOne")
+	public Map<String, String> getAccount(@RequestBody Map<String, Object> postObj) {
+		Map<String, String> response = new HashMap<String, String>();
+		Account account;
+
+		try {
+			account = accountRepository.findByUserId(Integer.parseInt(postObj.get("id").toString()));
+		} catch (NoSuchElementException | IllegalArgumentException e) {
+			response.put("message", "Invalid account id.");
+			return response;
+		}
+
+		response.put("id", Integer.toString(account.getUserId()));
+		response.put("username", account.getUsername());
+		response.put("recordCount", Integer.toString(account.getRecords().size()));
 
 		return response;
 	}
