@@ -24,9 +24,8 @@ export default function chromistaScreen({ navigation }) {
     }, []);
 
     const Item = ({ name, count }) => (
-        <View >
-            <Text style={styles.listText}>{count}  {name}</Text>
-
+        <View  >
+            <Text onPress={() => navigation.navigate("Species", { speciesName: name })} style={styles.listText}>{count}  {name}</Text>
         </View>
     );
 

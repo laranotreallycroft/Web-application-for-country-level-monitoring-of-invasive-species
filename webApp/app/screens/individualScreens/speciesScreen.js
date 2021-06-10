@@ -2,12 +2,13 @@ import { StatusBar } from 'expo-status-bar';
 import React, { useState, useEffect } from 'react';
 import { Button, Text, StyleSheet, View, Image, ScrollView, TextInput } from 'react-native';
 import axios from "axios";
-export default function speciesScreen({ navigation }) {
+export default function speciesScreen({ route, navigation }) {
+    const { speciesName } = route.params;
     const [data, setData] = useState("");
 
     useEffect(() => {
         const endpoint = "http://10.0.2.2:8080/species/getOne";
-        const payload = { id: 3598 }
+        const payload = { name: speciesName }
         axios.post(endpoint, payload).then(res => {
 
             setData(res.data);

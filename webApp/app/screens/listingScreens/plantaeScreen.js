@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { Button, Text, StyleSheet, View, FlatList, TextInput } from 'react-native';
 import axios from "axios";
 import _, { map } from 'underscore';
+
 export default function plantaeScreen({ navigation }) {
     const [data, setData] = useState("");
     const [filteredData, setFilteredData] = useState("");
@@ -24,9 +25,8 @@ export default function plantaeScreen({ navigation }) {
     }, []);
 
     const Item = ({ name, count }) => (
-        <View >
-            <Text style={styles.listText}>{count}  {name}</Text>
-
+        <View  >
+            <Text onPress={() => navigation.navigate("Species", { speciesName: name })} style={styles.listText}>{count}  {name}</Text>
         </View>
     );
 
@@ -47,7 +47,6 @@ export default function plantaeScreen({ navigation }) {
 
     return (
         <View style={styles.container}>
-
             <StatusBar style="auto" />
             <View style={styles.header} >
                 <Text style={styles.headerText} >Biljke (Plantae) </Text>

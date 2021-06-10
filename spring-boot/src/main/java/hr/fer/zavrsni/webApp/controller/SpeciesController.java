@@ -109,7 +109,7 @@ public class SpeciesController {
 		Species species;
 
 		try {
-			species = speciesRepository.findBySpeciesId(Integer.parseInt(postObj.get("id").toString()));
+			species = speciesRepository.findBySpeciesName(postObj.get("name").toString());
 		} catch (NoSuchElementException | IllegalArgumentException e) {
 			response.put("message", "Invalid account id.");
 			return response;
