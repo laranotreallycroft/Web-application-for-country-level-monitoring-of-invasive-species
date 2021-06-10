@@ -72,30 +72,45 @@ export default function createAccountScreen({ navigation }) {
                 placeholder="Repeat password"
                 onChangeText={setPassword2}
             />
-            <Button
-                style={styles.button}
-                title="complete registration"
-                color='#EA7D55'
-                onPress={handleRegistration}
-            />
-
+            <View style={styles.buttonRow}>
+                <Button
+                    style={styles.button}
+                    title="complete registration"
+                    color='#929E69'
+                    onPress={handleRegistration}
+                />
+            </View>
         </View >
     );
 }
 
+
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#A8AEC1',
-        alignItems: 'stretch',
-        justifyContent: 'flex-end',
+        backgroundColor: '#e9edc9',
+        justifyContent: 'flex-end'
     },
-    button: {
+    buttonRow: {
+        marginHorizontal: 70,
+        marginBottom: 20,
+        marginTop: 10,
+        display: "flex",
+        flexDirection: "row",
+        justifyContent: 'space-around'
+
     },
     input: {
+        justifyContent: 'flex-end',
         height: 40,
-        margin: 12,
         borderWidth: 1,
+        backgroundColor: "#ccd5ae",
+        borderColor: "#ccd5ae",
+        margin: 8,
+        padding: 10,
+        borderWidth: 15,
+        borderRadius: 20,
+        fontSize: 15
 
     }
 });

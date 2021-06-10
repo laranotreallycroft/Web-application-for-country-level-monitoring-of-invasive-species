@@ -54,19 +54,19 @@ function loginScreen({ navigation }) {
                 placeholder="Password"
                 onChangeText={setPassword}
             />
-            <Button
-                style={styles.button}
-                title="login"
-                color='#B5D2CB'
-                onPress={handleLogin}
-            />
-            <Button
-                style={styles.button}
-                title="create an account"
-                color='#EA7D55'
-                onPress={() => navigation.navigate('CreateAccount')}
-            />
-
+            <View style={styles.buttonRow}>
+                <Button
+                    style={styles.button}
+                    title="login"
+                    color='#929E69'
+                    onPress={handleLogin}
+                />
+                <Button
+                    title="create an account"
+                    color='#76796c'
+                    onPress={() => navigation.navigate('CreateAccount')}
+                />
+            </View>
         </View >
     );
 }
@@ -74,16 +74,29 @@ function loginScreen({ navigation }) {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#A8AEC1',
-        alignItems: 'stretch',
-        justifyContent: 'flex-end',
+        backgroundColor: '#e9edc9',
+        justifyContent: 'flex-end'
     },
-    button: {
+    buttonRow: {
+        marginHorizontal: 70,
+        marginBottom: 20,
+        marginTop: 10,
+        display: "flex",
+        flexDirection: "row",
+        justifyContent: 'space-around'
+
     },
     input: {
+        justifyContent: 'flex-end',
         height: 40,
-        margin: 12,
         borderWidth: 1,
+        backgroundColor: "#ccd5ae",
+        borderColor: "#ccd5ae",
+        margin: 8,
+        padding: 10,
+        borderWidth: 15,
+        borderRadius: 20,
+        fontSize: 15
 
     }
 });

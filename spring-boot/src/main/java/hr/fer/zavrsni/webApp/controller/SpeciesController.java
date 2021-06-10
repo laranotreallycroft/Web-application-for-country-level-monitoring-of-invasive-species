@@ -121,6 +121,7 @@ public class SpeciesController {
 		byte[] base64 = Base64.getEncoder().encode(species.getPhotograph());
 		response.put("photograph", new String(base64));
 		response.put("recordCount", species.getRecords().size());
+		response.put("speciesGroup", species.getSpeciesGroup().getSpeciesGroupName());
 
 		return response;
 	}

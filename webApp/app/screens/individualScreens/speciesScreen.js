@@ -12,7 +12,6 @@ export default function speciesScreen({ route, navigation }) {
         axios.post(endpoint, payload).then(res => {
 
             setData(res.data);
-            console.log(data.photograph);
         }).catch((error) => {
             console.log(error)
             alert("Data get failure");
@@ -23,20 +22,65 @@ export default function speciesScreen({ route, navigation }) {
     return (
         <View style={styles.container}>
             <StatusBar style="auto" />
-            <Text  >{data.id} </Text>
-            <Text  >{data.name} </Text>
-            <Text  >{data.description} </Text>
-            <Text  >{data.recordCount} </Text>
-            <Image style={{ width: 200, height: 200, resizeMode: 'contain' }} source={{ uri: `data:image/jpg;base64,${data.photograph}` }} />
-        </View >
+            <ScrollView style={styles.scroll}>
+                <View style={styles.textContainer}>
+                    <Text style={styles.textTitle}>Species : </Text>
+                    <Text style={styles.text}>{data.name}</Text>
+                </View>
+
+                <View style={styles.textContainer}>
+                    <Text style={styles.textTitle}>Species group: </Text>
+                    <Text style={styles.text}>{data.speciesGroup} </Text>
+                </View>
+                <View style={styles.textContainer}>
+                    <Text style={styles.textTitle}>Description: </Text>
+                    <Text style={styles.text}>{data.description}</Text>
+                </View>
+                <View style={styles.textContainer}>
+                    <Text style={styles.textTitle}>Sighting count: </Text>
+                    <Text style={styles.text}>{data.recordCount} </Text>
+                </View>
+                <Image style={styles.image} source={{ uri: `data:image/jpg;base64,${data.photograph}` }} />
+            </ScrollView></View >
     );
 }
 const styles = StyleSheet.create({
     container: {
+
         flex: 1,
-        backgroundColor: '#A8AEC1',
         alignItems: 'stretch',
-        justifyContent: 'flex-end',
+        backgroundColor: '#e9edc9'
+    },
+
+
+    textContainer: {
+        top: 60,
+        display: "flex",
+        flexDirection: "row",
+        backgroundColor: "#ccd5ae",
+        borderColor: "#ccd5ae",
+        margin: 10,
+        padding: 0,
+        borderWidth: 20,
+        borderRadius: 20,
+        alignItems: "center"
+    },
+    text: {
+        paddingRight: 100,
+        fontSize: 16,
+    },
+    textTitle: {
+        fontSize: 20,
+        fontWeight: "bold",
+        fontStyle: "italic",
+        marginRight: 10
+    },
+    image: {
+        marginTop: 90,
+        marginBottom: 20,
+        width: 400,
+        height: 300,
+        resizeMode: 'contain'
     }
 });
 
