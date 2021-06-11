@@ -88,6 +88,10 @@ public class Species implements Serializable {
 		return this.speciesName;
 	}
 
+	public String getShortenedSpeciesName() {
+		return this.speciesName.split(" ")[0] + " " + this.speciesName.split(" ")[1];
+	}
+
 	public void setSpeciesName(String speciesName) {
 		this.speciesName = speciesName;
 	}

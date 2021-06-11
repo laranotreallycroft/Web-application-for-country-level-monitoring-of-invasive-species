@@ -1,6 +1,7 @@
 package hr.fer.zavrsni.webApp.controller;
 
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,18 +15,12 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import hr.fer.zavrsni.webApp.dao.AccountRepository;
 import hr.fer.zavrsni.webApp.dao.LocationRepository;
 import hr.fer.zavrsni.webApp.dao.SightingRecordRepository;
 import hr.fer.zavrsni.webApp.dao.SpeciesRepository;
-import hr.fer.zavrsni.webApp.model.Location;
 import hr.fer.zavrsni.webApp.model.SightingRecord;
-import hr.fer.zavrsni.webApp.model.Species;
 
 @CrossOrigin(origins = "http://localhost:3000")
 @RestController
@@ -61,6 +56,33 @@ public class RecordController {
 
 		return response;
 	}
+	@PostMapping(value = "/record/getOne")
+	public Map<String, Object> getRecord(@RequestBody Map<String, Object> postObj) {
+		Map<String, Object> response = new HashMap<String, Object>();
+		SightingRecord record;
+
+		try {
+			record = sightingRecordRepository.findByRecordId(Integer.parseInt(postObj.get("id").toString()));
+		} catch (NoSuchElementException | IllegalArgumentException e) {
+			response.put("message", "Invalid account id.");
+			return response;
+		}
+
+		response.put("description", record.getDescription());
+		response.put("coordinateX", record.getLocationCoordinates().getX());
+		response.put("coordinateY", record.getLocationCoordinates().getY());
+		response.put("locationDescription", record.getLocationDescription());
+		System.out.println(record.getLocationId());
+		System.out.println( locationRepository.findByLocationId(record.getLocationId()));
+		response.put("location", locationRepository.findByLocationId(record.getLocationId()).getName());
+		byte[] base64 = Base64.getEncoder().encode(record.getPhotograph());
+		response.put("photograph", new String(base64));
+		response.put("species", record.getSpecies().getSpeciesName());
+		response.put("speciesGroup", record.getSpecies().getSpeciesGroup().getSpeciesGroupName());
+
+		return response;
+	}
+
 
 	@PostMapping(value = "/record/delete")
 	public Map<String, String> deleteRecord(@RequestBody Map<String, Object> postObj) {

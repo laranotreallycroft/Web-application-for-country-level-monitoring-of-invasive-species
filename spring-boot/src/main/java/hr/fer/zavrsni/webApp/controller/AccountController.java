@@ -1,6 +1,7 @@
 package hr.fer.zavrsni.webApp.controller;
 
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -15,7 +16,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import hr.fer.zavrsni.webApp.dao.AccountRepository;
+import hr.fer.zavrsni.webApp.dao.LocationRepository;
 import hr.fer.zavrsni.webApp.model.Account;
+import hr.fer.zavrsni.webApp.model.SightingRecord;
+import net.minidev.json.JSONArray;
+import net.minidev.json.JSONObject;
 
 @CrossOrigin(origins = "http://localhost:3000")
 @RestController
@@ -23,6 +28,9 @@ public class AccountController {
 
 	@Autowired
 	private AccountRepository accountRepository;
+
+	@Autowired
+	private LocationRepository locationRepository;
 
 	@GetMapping("/account/getAll")
 	public List<Map<String, String>> getAccounts() {
@@ -32,11 +40,11 @@ public class AccountController {
 
 			accountMap.put("id", Integer.toString(account.getUserId()));
 			accountMap.put("username", account.getUsername());
-			accountMap.put("recordCount", Integer.toString(account.getRecords().size()));
 
 			response.add(accountMap);
 
 		}
+		response.sort((o1, o2) -> o2.get("username").compareTo(o2.get("username")));
 
 		return response;
 	}
@@ -48,7 +56,7 @@ public class AccountController {
 		for (Account account : accountRepository.findAll()) {
 			accountList.add(account);
 		}
-		accountList.sort((o1, o2) ->  o2.getRecords().size()-o1.getRecords().size());
+		accountList.sort((o1, o2) -> o2.getRecords().size() - o1.getRecords().size());
 		for (int i = 0; i < 3; i++) {
 			Map<String, String> accountMap = new HashMap<>();
 			accountMap.put("username", accountList.get(i).getUsername());
@@ -59,8 +67,8 @@ public class AccountController {
 	}
 
 	@PostMapping(value = "/account/getOne")
-	public Map<String, String> getAccount(@RequestBody Map<String, Object> postObj) {
-		Map<String, String> response = new HashMap<String, String>();
+	public Map<String, Object> getAccount(@RequestBody Map<String, Object> postObj) {
+		Map<String, Object> response = new HashMap<String, Object>();
 		Account account;
 
 		try {
@@ -70,10 +78,17 @@ public class AccountController {
 			return response;
 		}
 
-		response.put("id", Integer.toString(account.getUserId()));
 		response.put("username", account.getUsername());
-		response.put("recordCount", Integer.toString(account.getRecords().size()));
-
+		response.put("recordCount", account.getRecords().size());
+		JSONArray recordsArr = new JSONArray();
+		for (SightingRecord rec : account.getRecords()) {
+			JSONObject record = new JSONObject();
+			record.put("id", rec.getRecordId());
+			record.put("species", rec.getSpecies().getShortenedSpeciesName());
+			record.put("location", locationRepository.findByLocationId(rec.getLocationId()).getName());
+			recordsArr.add(record);
+		}
+		response.put("records", recordsArr);
 		return response;
 	}
 

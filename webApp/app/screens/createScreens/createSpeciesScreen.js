@@ -113,7 +113,7 @@ export default function createSpeciesScreen(props) {
             <Picker
                 prompt="Species group"
                 selectedValue={speciesGroup}
-                style={{ height: 50 }}
+                style={styles.picker}
                 onValueChange={(itemValue, itemIndex) => setSpeciesGroup(itemValue)}
             >
                 {
@@ -129,34 +129,66 @@ export default function createSpeciesScreen(props) {
             />
             <TouchableOpacity
                 activeOpacity={0.5}
-                style={styles.buttonStyle}
+                style={styles.chooseImage}
                 onPress={() => chooseFile()}>
                 <Text style={styles.textStyle}>Choose Image</Text>
             </TouchableOpacity>
-            <Button
-                style={styles.button}
-                title="Add new species"
-                color='#EA7D55'
-                onPress={handleCreateSpecies}
-            />
-
+            <View style={styles.buttonRow}>
+                <Button
+                    style={styles.button}
+                    title="Add new species"
+                    color='#929E69'
+                    onPress={handleCreateSpecies}
+                />
+            </View >
         </View >
     );
 }
 
+
+
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#A8AEC1',
-        alignItems: 'stretch',
-        justifyContent: 'flex-end',
+        backgroundColor: '#e9edc9',
+        justifyContent: 'flex-end'
     },
-    button: {
+    chooseImage: {
+        alignSelf: 'center',
+        alignContent: "center",
+        alignItems: "center",
+        backgroundColor: "#ccd5ae",
+        backgroundColor: "#ccd5ae",
+        borderColor: "#ccd5ae",
+        margin: 2,
+        borderWidth: 10,
+        borderRadius: 20,
+    },
+    textStyle: {
+        fontSize: 15
+    },
+    buttonRow: {
+        marginHorizontal: 70,
+        marginBottom: 20,
+        marginTop: 10,
+        display: "flex",
+        flexDirection: "row",
+        justifyContent: 'space-around'
+
     },
     input: {
+        justifyContent: 'flex-end',
         height: 40,
-        margin: 12,
         borderWidth: 1,
-
+        backgroundColor: "#ccd5ae",
+        borderColor: "#ccd5ae",
+        margin: 8,
+        padding: 10,
+        borderWidth: 15,
+        borderRadius: 20,
+        fontSize: 15
+    },
+    picker: {
+        height: 50,
     }
 });

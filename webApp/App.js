@@ -25,6 +25,10 @@ import speciesNavigator from './app/screens/listingScreens/navigators/plantaeNav
 import plantaeNavigator from './app/screens/listingScreens/navigators/plantaeNavigator';
 import chromistaNavigator from './app/screens/listingScreens/navigators/chromistaNavigator';
 import animaliaNavigator from './app/screens/listingScreens/navigators/animaliaNavigator';
+import userNavigator from './app/screens/individualScreens/navigators/userNavigator';
+import adminNavigator from './app/screens/individualScreens/navigators/adminNavigator';
+import accountsNavigator from './app/screens/listingScreens/navigators/accountsNavigator';
+import accountsScreen from './app/screens/listingScreens/accountsScreen';
 
 export default function App() {
 
@@ -42,21 +46,11 @@ export default function App() {
           labelStyle: { fontWeight: "bold" }
         }}>
         <Drawer.Screen name="Home" component={homeScreen} />
-        <Drawer.Screen name="Biljke (Plantae)" component={plantaeNavigator} />
-        <Drawer.Screen name="Životinje (Animalia)" component={animaliaNavigator} />
-        <Drawer.Screen name="Alge (Chromista)" component={chromistaNavigator} />
-        <Drawer.Screen name="Login" component={loginScreen} />
-        <Drawer.Screen name="Admin" component={adminScreen} />
-
-        <Drawer.Screen name="CreateAccount" component={createAccountScreen} />
-        <Drawer.Screen name="CreateCounty" component={createCountyScreen} />
-        <Drawer.Screen name="CreateLocation" component={createLocationScreen} />
-        <Drawer.Screen name="CreateSightingRecord" component={createSightingRecordScreen} />
-        <Drawer.Screen name="CreateSpeciesGroup" component={createSpeciesGroupScreen} />
-        <Drawer.Screen name="CreateSpecies" component={createSpeciesScreen} />
-
-        <Drawer.Screen name="User" component={userScreen} />
-
+        <Drawer.Screen name="Plants (Plantae)" component={plantaeNavigator} />
+        <Drawer.Screen name="Animals (Animalia)" component={animaliaNavigator} />
+        <Drawer.Screen name="Algae (Chromista)" component={chromistaNavigator} />
+        <Drawer.Screen name="User" component={userNavigator} />
+        <Drawer.Screen name="Admin" component={adminNavigator} />
       </Drawer.Navigator>
 
     </NavigationContainer>

@@ -2,15 +2,17 @@ import { StatusBar } from 'expo-status-bar';
 import React, { useState, useEffect } from 'react';
 import { Button, Text, StyleSheet, View, Image, ScrollView, TextInput } from 'react-native';
 import axios from "axios";
-export default function speciesScreen({ route, navigation }) {
-    const { speciesName } = route.params;
+
+import MapView, { Marker } from 'react-native-maps';
+export default function RecordScreen({ route, navigation }) {
+    const { recordId } = route.params;
     const [data, setData] = useState("");
 
     useEffect(() => {
-        const endpoint = "http://10.0.2.2:8080/species/getOne";
-        const payload = { name: speciesName }
+        const endpoint = "http://10.0.2.2:8080/record/getOne";
+        const payload = { id: recordId }
+        console.log(payload)
         axios.post(endpoint, payload).then(res => {
-
             setData(res.data);
         }).catch((error) => {
             console.log(error)
@@ -24,23 +26,41 @@ export default function speciesScreen({ route, navigation }) {
             <StatusBar style="auto" />
             <ScrollView style={styles.scroll}>
                 <View style={styles.textContainer}>
-                    <Text style={styles.textTitle}>Species : </Text>
-                    <Text style={styles.text}>{data.name}</Text>
+                    <Text style={styles.textTitle}>Species: </Text>
+                    <Text style={styles.text}>{data.species}</Text>
                 </View>
-
                 <View style={styles.textContainer}>
                     <Text style={styles.textTitle}>Species group: </Text>
-                    <Text style={styles.text}>{data.speciesGroup} </Text>
+                    <Text style={styles.text}>{data.speciesGroup}</Text>
                 </View>
                 <View style={styles.textContainer}>
                     <Text style={styles.textTitle}>Description: </Text>
                     <Text style={styles.text}>{data.description}</Text>
                 </View>
                 <View style={styles.textContainer}>
-                    <Text style={styles.textTitle}>Sighting count: </Text>
-                    <Text style={styles.text}>{data.recordCount} </Text>
+                    <Text style={styles.textTitle}>Location: </Text>
+                    <Text style={styles.text}>{data.location}</Text>
                 </View>
+                <View style={styles.textContainer}>
+                    <Text style={styles.textTitle}>Location description: </Text>
+                    <Text style={styles.text}>{data.locationDescription}</Text>
+                </View>
+
+                <MapView style={styles.map} initialRegion={{
+                    latitude: 45.1,
+                    longitude: 16.5,
+                    latitudeDelta: 2,
+                    longitudeDelta: 2,
+                }}
+                >
+                    {data.coordinateX != null && <Marker coordinate={{
+                        latitude: data.coordinateX,
+                        longitude: data.coordinateY
+                    }} />}
+                </MapView>
+
                 <Image style={styles.image} source={{ uri: `data:image/jpg;base64,${data.photograph}` }} />
+
             </ScrollView></View >
     );
 }
@@ -68,7 +88,7 @@ const styles = StyleSheet.create({
         alignItems: "center"
     },
     text: {
-        paddingRight: 100,
+        paddingRight: 130,
         fontSize: 16,
     },
     textTitle: {
@@ -83,6 +103,8 @@ const styles = StyleSheet.create({
         width: 400,
         height: 300,
         resizeMode: 'contain'
+    }, map: {
+        height: 200
     }
 });
 
