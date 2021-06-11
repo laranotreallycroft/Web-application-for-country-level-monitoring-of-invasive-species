@@ -69,7 +69,7 @@ export default function sightingRecordsScreen({ navigation }) {
 
             <StatusBar style="auto" />
             <View style={styles.header} >
-                <Text style={styles.headerText} > Species groups </Text>
+                <Text style={styles.headerText} > Sighting Records </Text>
             </View>
 
             <View

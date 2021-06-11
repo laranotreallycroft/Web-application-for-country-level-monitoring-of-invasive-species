@@ -4,7 +4,8 @@ import { Button, Text, StyleSheet, View, ScrollView, FlatList } from 'react-nati
 import axios from "axios";
 export default function userScreen({ route, navigation }) {
 
-    const { id } = route.params == null ? 1 : route.params;
+    const id = 1
+    //const { id }route.params
 
     const [data, setData] = useState("");
 
