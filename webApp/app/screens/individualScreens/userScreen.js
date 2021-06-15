@@ -1,6 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { useState, useEffect } from 'react';
-import { Button, Text, StyleSheet, View, ScrollView, FlatList } from 'react-native';
+import { Text, StyleSheet, View, ScrollView, FlatList } from 'react-native';
 import axios from "axios";
 export default function userScreen({ route, navigation }) {
 
@@ -10,15 +10,13 @@ export default function userScreen({ route, navigation }) {
     const [data, setData] = useState("");
 
     useEffect(() => {
-        const endpoint = "http://10.0.2.2:8080/account/getOne";
         const payload = { id: id }
-        axios.post(endpoint, payload).then(res => {
+        axios.post("http://10.0.2.2:8080/account/getOne", payload).then(res => {
 
             setData(res.data);
 
-        }).catch((error) => {
-            console.log(error)
-            alert("Data get failure");
+        }).catch(() => {
+            alert("Failed to get leaderboard species data");
         });
 
     }, []);
@@ -27,7 +25,6 @@ export default function userScreen({ route, navigation }) {
         <View style={styles.flex}>
             <Text onPress={() =>
                 navigation.navigate("RecordScreen", { recordId: id })} style={styles.listText}
-
             > {species}</Text>
             <Text> {location}</Text>
         </View >
@@ -37,41 +34,42 @@ export default function userScreen({ route, navigation }) {
     var renderItem = ({ item }) => (
         <Item species={item.species} location={item.location} id={item.id} />
     );
-
-    return (
-        <View style={styles.container}>
-            <StatusBar style="auto" />
-            <ScrollView style={styles.scroll}>
-                <View style={styles.textContainer}>
-                    <Text style={styles.textTitle}>Username : </Text>
-                    <Text style={styles.text}>{data.username}</Text>
-                </View>
-
-                <View style={styles.textContainer}>
-                    <Text style={styles.textTitle}>Sighting count: </Text>
-                    <Text style={styles.text}>{data.recordCount} </Text>
-                </View>
-                <View style={styles.list}>
-                    <Text style={styles.textTitle}>Your sightings: </Text>
-                    <View>
-                        <View style={styles.flex}>
-                            <Text style={styles.textTitle2}> Species</Text>
-                            <Text style={styles.textTitle2}> Location</Text>
-                        </View>
-                        <FlatList
-                            data={data.records}
-                            renderItem={renderItem}
-                            keyExtractor={item => item.id}
-
-                        />
+    if (data != null)
+        return (
+            <View style={styles.container}>
+                <StatusBar style="auto" />
+                <ScrollView style={styles.scroll}>
+                    <View style={styles.textContainer}>
+                        <Text style={styles.textTitle}>Username : </Text>
+                        <Text style={styles.text}>{data.username}</Text>
                     </View>
-                </View>
+
+                    <View style={styles.textContainer}>
+                        <Text style={styles.textTitle}>Sighting count: </Text>
+                        <Text style={styles.text}>{data.recordCount} </Text>
+                    </View>
+                    <View style={styles.list}>
+                        <Text style={styles.textTitle}>Your sightings: </Text>
+                        <View>
+                            <View style={styles.flex}>
+                                <Text style={styles.textTitle2}> Species</Text>
+                                <Text style={styles.textTitle2}> Location</Text>
+                            </View>
+                            <FlatList
+                                data={data.records}
+                                renderItem={renderItem}
+                                keyExtractor={item => item.id}
+
+                            />
+                        </View>
+                    </View>
 
 
 
-            </ScrollView>
-        </View >
-    );
+                </ScrollView>
+            </View >
+        );
+    else return <View style={styles.container}><Text>Loading...</Text></View>;
 }
 const styles = StyleSheet.create({
     container: {

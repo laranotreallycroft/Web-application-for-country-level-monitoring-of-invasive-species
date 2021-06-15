@@ -1,6 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { useState, useEffect } from 'react';
-import { Button, Text, StyleSheet, View, Image, ScrollView, TextInput } from 'react-native';
+import { Text, StyleSheet, View, Image, ScrollView, TextInput } from 'react-native';
 import axios from "axios";
 
 import MapView, { Marker } from 'react-native-maps';
@@ -9,60 +9,69 @@ export default function RecordScreen({ route, navigation }) {
     const [data, setData] = useState("");
 
     useEffect(() => {
-        const endpoint = "http://10.0.2.2:8080/record/getOne";
         const payload = { id: recordId }
-        console.log(payload)
-        axios.post(endpoint, payload).then(res => {
+        axios.post("http://10.0.2.2:8080/record/getOne", payload).then(res => {
             setData(res.data);
         }).catch((error) => {
-            console.log(error)
-            alert("Data get failure");
+            alert("Failed to get record data");
         });
-
     }, []);
 
-    return (
-        <View style={styles.container}>
-            <StatusBar style="auto" />
-            <ScrollView style={styles.scroll}>
-                <View style={styles.textContainer}>
-                    <Text style={styles.textTitle}>Species: </Text>
-                    <Text style={styles.text}>{data.species}</Text>
-                </View>
-                <View style={styles.textContainer}>
-                    <Text style={styles.textTitle}>Species group: </Text>
-                    <Text style={styles.text}>{data.speciesGroup}</Text>
-                </View>
-                <View style={styles.textContainer}>
-                    <Text style={styles.textTitle}>Description: </Text>
-                    <Text style={styles.text}>{data.description}</Text>
-                </View>
-                <View style={styles.textContainer}>
-                    <Text style={styles.textTitle}>Location: </Text>
-                    <Text style={styles.text}>{data.location}</Text>
-                </View>
-                <View style={styles.textContainer}>
-                    <Text style={styles.textTitle}>Location description: </Text>
-                    <Text style={styles.text}>{data.locationDescription}</Text>
-                </View>
+    if (data != null)
+        return (
+            <View style={styles.container}>
+                <StatusBar style="auto" />
+                <ScrollView style={styles.scroll}>
 
-                <MapView style={styles.map} initialRegion={{
-                    latitude: 45.1,
-                    longitude: 16.5,
-                    latitudeDelta: 2,
-                    longitudeDelta: 2,
-                }}
-                >
-                    {data.coordinateX != null && <Marker coordinate={{
-                        latitude: data.coordinateX,
-                        longitude: data.coordinateY
-                    }} />}
-                </MapView>
+                    <View style={styles.textContainer}>
+                        <Text style={styles.textTitle}>Species: </Text>
+                        <Text style={styles.text}>{data.species}</Text>
+                    </View>
 
-                <Image style={styles.image} source={{ uri: `data:image/jpg;base64,${data.photograph}` }} />
+                    <View style={styles.textContainer}>
+                        <Text style={styles.textTitle}>Species group: </Text>
+                        <Text style={styles.text}>{data.speciesGroup}</Text>
+                    </View>
 
-            </ScrollView></View >
-    );
+                    {data.description != null &&
+                        <View style={styles.textContainer}>
+                            <Text style={styles.textTitle}>Description: </Text>
+                            <Text style={styles.text}>{data.description}</Text>
+                        </View>
+                    }
+
+                    <View style={styles.textContainer}>
+                        <Text style={styles.textTitle}>Location: </Text>
+                        <Text style={styles.text}>{data.location}</Text>
+                    </View>
+
+                    {data.locationDescription != null &&
+                        <View style={styles.textContainer}>
+                            <Text style={styles.textTitle}>Location description: </Text>
+                            <Text style={styles.text}>{data.locationDescription}</Text>
+                        </View>
+                    }
+
+                    {data.coordinateX != null &&
+                        <MapView style={styles.map} initialRegion={{
+                            latitude: 45.1,
+                            longitude: 16.5,
+                            latitudeDelta: 2,
+                            longitudeDelta: 2,
+                        }}>
+                            <Marker coordinate={{
+                                latitude: data.coordinateX,
+                                longitude: data.coordinateY
+                            }} />
+                        </MapView>
+                    }
+
+                    {data.photograph != null &&
+                        <Image style={styles.image} source={{ uri: `data:image/jpg;base64,${data.photograph}` }} />
+                    }
+                </ScrollView></View >
+        );
+    else return <View style={styles.container}><Text>Loading...</Text></View>;
 }
 const styles = StyleSheet.create({
     container: {
@@ -74,8 +83,6 @@ const styles = StyleSheet.create({
     scroll: {
         top: 60,
     },
-
-
     textContainer: {
         display: "flex",
         flexDirection: "row",
@@ -99,7 +106,7 @@ const styles = StyleSheet.create({
     },
     image: {
         marginTop: 20,
-        marginBottom: 20,
+        marginBottom: 80,
         width: 400,
         height: 300,
         resizeMode: 'contain'

@@ -1,6 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { useState, useEffect } from 'react';
-import { Text, StyleSheet, View, FlatList, TextInput, TouchableOpacity } from 'react-native';
+import { Text, StyleSheet, View, FlatList, TextInput } from 'react-native';
 import axios from "axios";
 
 export default function sightingRecordsScreen({ navigation }) {
@@ -9,33 +9,30 @@ export default function sightingRecordsScreen({ navigation }) {
     const [search, setSearch] = useState("");
     useEffect(() => {
 
-        const endpoint = "http://10.0.2.2:8080/record/getAll";
-        axios.get(endpoint).then(res => {
+        axios.get("http://10.0.2.2:8080/record/getAll").then(res => {
             setData(res.data)
             setFilteredData(res.data)
-
+            setSearch("")
         }).catch((error) => {
             console.log(error)
-            alert("Data get failure");
+            alert("Failed to get sighting record data");
         });
 
     }, []);
-    const handleDelete = (name) => {
-        var endpoint = "http://10.0.2.2:8080/record/delete";
-        const payload = { name: name }
-        axios.post(endpoint, payload).then(res => {
-            var endpoint2 = "http://10.0.2.2:8080/record/getAll";
-            axios.get(endpoint2).then(res => {
+    const handleDelete = (id) => {
+        const payload = { id: id }
+        axios.post("http://10.0.2.2:8080/record/delete", payload).then(res => {
+            axios.get("http://10.0.2.2:8080/record/getAll").then(res => {
                 setData(res.data)
                 setFilteredData(res.data)
+                setSearch("")
 
             }).catch((error) => {
-                console.log(error)
-                alert("Data get failure");
+                alert("Failed to get sighting record data");
             });
         }).catch((error) => {
-            alert(error)
-            console.log(error)
+            alert("Failed to get sighting record data");
+
         });
 
 
@@ -45,7 +42,7 @@ export default function sightingRecordsScreen({ navigation }) {
     const Item = ({ id }) => (
         <View style={styles.row} >
             <Text onPress={() => handleDelete(id)} style={styles.xButton}>x  </Text>
-            <Text style={styles.listText}>{id} </Text>
+            <Text onPress={() => navigation.navigate("SightingRecord", { recordId: id })} style={styles.listText}>{id} </Text>
         </View>
     );
 
@@ -63,36 +60,37 @@ export default function sightingRecordsScreen({ navigation }) {
     };
 
 
+    if (data != null)
+        return (
+            <View style={styles.container}>
 
-    return (
-        <View style={styles.container}>
+                <StatusBar style="auto" />
+                <View style={styles.header} >
+                    <Text style={styles.headerText} > Sighting Records </Text>
+                </View>
 
-            <StatusBar style="auto" />
-            <View style={styles.header} >
-                <Text style={styles.headerText} > Sighting Records </Text>
-            </View>
-
-            <View
-                style={styles.SearchBar}
-            >
-                <TextInput
-                    autoCapitalize="none"
-                    autoCorrect={false}
-                    clearButtonMode="always"
-                    value={search}
-                    onChangeText={searchText => handleSearch(searchText)}
-                    placeholder="Search"
-                    style={styles.textInput}
+                <View
+                    style={styles.SearchBar}
+                >
+                    <TextInput
+                        autoCapitalize="none"
+                        autoCorrect={false}
+                        clearButtonMode="always"
+                        value={search}
+                        onChangeText={searchText => handleSearch(searchText)}
+                        placeholder="Search"
+                        style={styles.textInput}
+                    />
+                </View>
+                <FlatList
+                    data={filteredData}
+                    renderItem={renderItem}
+                    keyExtractor={item => item.id}
+                    style={styles.list}
                 />
-            </View>
-            <FlatList
-                data={filteredData}
-                renderItem={renderItem}
-                keyExtractor={item => item.name}
-                style={styles.list}
-            />
-        </View >
-    );
+            </View >
+        );
+    else return <View style={styles.container}><Text>Loading...</Text></View>;
 }
 const styles = StyleSheet.create({
     container: {
@@ -103,6 +101,7 @@ const styles = StyleSheet.create({
     header: {
         flexDirection: "row",
         alignItems: "center",
+        justifyContent: "center",
         top: 30,
         borderColor: "#ccd5ae",
         backgroundColor: "#ccd5ae",
@@ -112,14 +111,10 @@ const styles = StyleSheet.create({
         borderRadius: 10
     }
     , headerText: {
-        left: 100,
-        paddingRight: 60,
         fontSize: 25,
         fontStyle: "italic",
         color: "#5D534F",
         fontWeight: "bold"
-    },
-    textContainer: {
     },
     list: {
         marginTop: 50,

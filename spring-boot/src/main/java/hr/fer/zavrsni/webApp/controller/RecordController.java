@@ -36,44 +36,47 @@ public class RecordController {
 	private SpeciesRepository speciesRepository;
 
 	@GetMapping("/record/getAll")
-	public List<Map<String, String>> getRecords() {
-		List<Map<String, String>> response = new ArrayList<>();
+	public List<Map<String, Object>> getRecords() {
+		List<Map<String, Object>> response = new ArrayList<>();
 		for (SightingRecord sightingRecord : sightingRecordRepository.findAll()) {
-			Map<String, String> recordMap = new HashMap<>();
+			Map<String, Object> recordMap = new HashMap<>();
 
-			recordMap.put("id", Integer.toString(sightingRecord.getRecordId()));
+			recordMap.put("id", sightingRecord.getRecordId());
 			recordMap.put("description", sightingRecord.getDescription());
 			recordMap.put("coordinates", sightingRecord.getLocationCoordinates() == null ? null
 					: sightingRecord.getLocationCoordinates().toString());
 			recordMap.put("locationDescription", sightingRecord.getLocationDescription());
 			recordMap.put("location", sightingRecord.getLocationId().toString());
-			recordMap.put("speciesId", sightingRecord.getSpecies().getSpeciesId().toString());
+			recordMap.put("speciesId", sightingRecord.getSpecies().getSpeciesId());
 			recordMap.put("userId",
-					sightingRecord.getUser() == null ? null : sightingRecord.getUser().getUserId().toString());
+					sightingRecord.getUser() == null ? null : sightingRecord.getUser().getUserId());
 
 			response.add(recordMap);
 		}
 
 		return response;
 	}
+
 	@PostMapping(value = "/record/getOne")
 	public Map<String, Object> getRecord(@RequestBody Map<String, Object> postObj) {
 		Map<String, Object> response = new HashMap<String, Object>();
 		SightingRecord record;
 
 		try {
-			record = sightingRecordRepository.findByRecordId(Integer.parseInt(postObj.get("id").toString()));
+			record = sightingRecordRepository.findByRecordId((Integer) postObj.get("id"));
 		} catch (NoSuchElementException | IllegalArgumentException e) {
 			response.put("message", "Invalid account id.");
 			return response;
 		}
 
 		response.put("description", record.getDescription());
-		response.put("coordinateX", record.getLocationCoordinates().getX());
-		response.put("coordinateY", record.getLocationCoordinates().getY());
+		if (record.getLocationCoordinates() != null) {
+			response.put("coordinateX", record.getLocationCoordinates().getX());
+			response.put("coordinateY", record.getLocationCoordinates().getY());
+		}
 		response.put("locationDescription", record.getLocationDescription());
 		System.out.println(record.getLocationId());
-		System.out.println( locationRepository.findByLocationId(record.getLocationId()));
+		System.out.println(locationRepository.findByLocationId(record.getLocationId()));
 		response.put("location", locationRepository.findByLocationId(record.getLocationId()).getName());
 		byte[] base64 = Base64.getEncoder().encode(record.getPhotograph());
 		response.put("photograph", new String(base64));
@@ -83,14 +86,13 @@ public class RecordController {
 		return response;
 	}
 
-
 	@PostMapping(value = "/record/delete")
 	public Map<String, String> deleteRecord(@RequestBody Map<String, Object> postObj) {
 		Map<String, String> response = new HashMap<>();
 		SightingRecord sightingRecord;
 
 		try {
-			sightingRecord = sightingRecordRepository.findByRecordId(Integer.parseInt(postObj.get("id").toString()));
+			sightingRecord = sightingRecordRepository.findByRecordId((Integer) postObj.get("id"));
 		} catch (NoSuchElementException | IllegalArgumentException e) {
 			response.put("message", "Invalid sighting record id.");
 			return response;

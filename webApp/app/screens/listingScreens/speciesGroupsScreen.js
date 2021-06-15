@@ -7,99 +7,92 @@ export default function speciesGroupsScreen({ navigation }) {
     const [data, setData] = useState("");
     const [filteredData, setFilteredData] = useState("");
     const [search, setSearch] = useState("");
+
     useEffect(() => {
 
-        const endpoint = "http://10.0.2.2:8080/speciesGroup/getAll";
-        axios.get(endpoint).then(res => {
+        axios.get("http://10.0.2.2:8080/speciesGroup/getAll").then(res => {
             setData(res.data)
             setFilteredData(res.data)
+            setSearch("")
 
         }).catch((error) => {
-            console.log(error)
-            alert("Data get failure");
+            alert("Failed to get species group data");
         });
 
     }, []);
-    const handleDelete = (name) => {
-        var endpoint = "http://10.0.2.2:8080/speciesGroup/delete";
-        const payload = { name: name }
-        axios.post(endpoint, payload).then(res => {
-            var endpoint2 = "http://10.0.2.2:8080/speciesGroup/getAll";
-            axios.get(endpoint2).then(res => {
+
+    const handleDelete = (id) => {
+        alert("Deleting species group")
+        const payload = { id: id }
+        axios.post("http://10.0.2.2:8080/speciesGroup/delete", payload).then(res => {
+            axios.get("http://10.0.2.2:8080/speciesGroup/getAll").then(res => {
                 setData(res.data)
                 setFilteredData(res.data)
-
-            }).catch((error) => {
-                console.log(error)
-                alert("Data get failure");
+                setSearch("")
+            }).catch(() => {
+                alert("Failed to get species group data");
             });
-        }).catch((error) => {
-            alert(error)
-            console.log(error)
+        }).catch(() => {
+            alert("Failed to get species group data")
         });
 
 
 
     }
 
-    const Item = ({ name }) => (
+    const Item = ({ id, name }) => (
         <View style={styles.row} >
-            <Text onPress={() => handleDelete(name)} style={styles.xButton}>x  </Text>
+            <Text onPress={() => handleDelete(id)} style={styles.xButton}>x  </Text>
             <Text style={styles.listText}>{name} </Text>
         </View>
     );
 
 
     var renderItem = ({ item }) => (
-        <Item name={item.name} />
+        <Item id={item.id} name={item.name} />
     );
 
 
     const handleSearch = text => {
         const formattedQuery = text.toLowerCase();
-        const filteredData = data.filter((item) => item.name.toLowerCase().includes(formattedQuery)).map(({ name }) => ({ name }));
+        const filteredData = data.filter((item) => item.name.toLowerCase().includes(formattedQuery)).map(({ id, name }) => ({ id, name }));
         setFilteredData(filteredData);
         setSearch(text);
     };
 
 
+    if (data != null)
+        return (
+            <View style={styles.container}>
 
-    return (
-        <View style={styles.container}>
+                <StatusBar style="auto" />
+                <View style={styles.header} >
+                    <Text style={styles.headerText} > Species groups</Text>
+                    <Text onPress={() => navigation.navigate("AddSpeciesGroup")} style={[styles.headerText, styles.addText]}>+</Text>
+                </View>
 
-            <StatusBar style="auto" />
-            <View style={styles.header} >
-                <Text style={styles.headerText} > Species groups </Text>
-                <TouchableOpacity
-                    activeOpacity={0.5}
-                    style={styles.textContainer}
-                    onPress={() => navigation.navigate("AddSpeciesGroup")}>
-
-                    <Text style={styles.headerText}>+</Text>
-                </TouchableOpacity>
-            </View>
-
-            <View
-                style={styles.SearchBar}
-            >
-                <TextInput
-                    autoCapitalize="none"
-                    autoCorrect={false}
-                    clearButtonMode="always"
-                    value={search}
-                    onChangeText={searchText => handleSearch(searchText)}
-                    placeholder="Search"
-                    style={styles.textInput}
+                <View
+                    style={styles.SearchBar}
+                >
+                    <TextInput
+                        autoCapitalize="none"
+                        autoCorrect={false}
+                        clearButtonMode="always"
+                        value={search}
+                        onChangeText={searchText => handleSearch(searchText)}
+                        placeholder="Search"
+                        style={styles.textInput}
+                    />
+                </View>
+                <FlatList
+                    data={filteredData}
+                    renderItem={renderItem}
+                    keyExtractor={item => item.id}
+                    style={styles.list}
                 />
-            </View>
-            <FlatList
-                data={filteredData}
-                renderItem={renderItem}
-                keyExtractor={item => item.name}
-                style={styles.list}
-            />
-        </View >
-    );
+            </View >
+        );
+    else return <View style={styles.container}><Text>Loading...</Text></View>;
 }
 const styles = StyleSheet.create({
     container: {
@@ -110,6 +103,7 @@ const styles = StyleSheet.create({
     header: {
         flexDirection: "row",
         alignItems: "center",
+        justifyContent: "center",
         top: 30,
         borderColor: "#ccd5ae",
         backgroundColor: "#ccd5ae",
@@ -119,15 +113,15 @@ const styles = StyleSheet.create({
         borderRadius: 10
     }
     , headerText: {
-        left: 100,
-        paddingRight: 60,
         fontSize: 25,
         fontStyle: "italic",
         color: "#5D534F",
         fontWeight: "bold"
     },
-    textContainer: {
+    addText: {
+        paddingLeft: 20
     },
+
     list: {
         marginTop: 50,
         marginBottom: 5,

@@ -1,39 +1,36 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { useState, useEffect } from 'react';
-import { Button, Text, StyleSheet, View, FlatList, TextInput } from 'react-native';
+import { Text, StyleSheet, View, FlatList, TextInput } from 'react-native';
 import axios from "axios";
-import _, { map } from 'underscore';
 export default function chromistaScreen({ navigation }) {
     const [data, setData] = useState("");
     const [filteredData, setFilteredData] = useState("");
     const [search, setSearch] = useState("");
+
     useEffect(() => {
         const group_object = {
             speciesGroup: "Chromista"
         };
-        const endpoint = "http://10.0.2.2:8080/speciesGroup/getSpecies";
-        axios.post(endpoint, group_object).then(res => {
+        axios.post("http://10.0.2.2:8080/speciesGroup/getSpecies", group_object).then(res => {
             setData(res.data)
             setFilteredData(res.data)
+            setSearch("")
 
         }).catch((error) => {
-            console.log(error)
             alert("Data get failure");
         });
 
     }, []);
 
-    const Item = ({ name, count }) => (
+    const Item = ({ id, name }) => (
         <View  >
-            <Text onPress={() => navigation.navigate("Species", { speciesName: name })} style={styles.listText}>{count}  {name}</Text>
+            <Text onPress={() => navigation.navigate("Species", { speciesId: id })} style={styles.listText}>{name}</Text>
         </View>
     );
 
-
     var renderItem = ({ item }) => (
-        <Item name={item.name} count={item.count} />
+        <Item id={item.id} name={item.name} />
     );
-
 
     const handleSearch = text => {
         const formattedQuery = text.toLowerCase();
@@ -43,35 +40,36 @@ export default function chromistaScreen({ navigation }) {
     };
 
 
+    if (data != null)
+        return (
+            <View style={styles.container}>
 
-    return (
-        <View style={styles.container}>
-
-            <StatusBar style="auto" />
-            <View style={styles.header} >
-                <Text style={styles.headerText} >Alge (Chromista) </Text>
-            </View>
-            <View
-                style={styles.SearchBar}
-            >
-                <TextInput
-                    autoCapitalize="none"
-                    autoCorrect={false}
-                    clearButtonMode="always"
-                    value={search}
-                    onChangeText={searchText => handleSearch(searchText)}
-                    placeholder="Search"
-                    style={styles.textInput}
+                <StatusBar style="auto" />
+                <View style={styles.header} >
+                    <Text style={styles.headerText} >Algae (Chromista) </Text>
+                </View>
+                <View
+                    style={styles.SearchBar}
+                >
+                    <TextInput
+                        autoCapitalize="none"
+                        autoCorrect={false}
+                        clearButtonMode="always"
+                        value={search}
+                        onChangeText={searchText => handleSearch(searchText)}
+                        placeholder="Search"
+                        style={styles.textInput}
+                    />
+                </View>
+                <FlatList
+                    data={filteredData}
+                    renderItem={renderItem}
+                    keyExtractor={item => item.id}
+                    style={styles.list}
                 />
-            </View>
-            <FlatList
-                data={filteredData}
-                renderItem={renderItem}
-                keyExtractor={item => item.name}
-                style={styles.list}
-            />
-        </View >
-    );
+            </View >
+        );
+    else return <View style={styles.container}><Text>Loading...</Text></View>;
 }
 const styles = StyleSheet.create({
     container: {

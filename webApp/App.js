@@ -29,6 +29,7 @@ import userNavigator from './app/screens/individualScreens/navigators/userNaviga
 import adminNavigator from './app/screens/individualScreens/navigators/adminNavigator';
 import accountsNavigator from './app/screens/listingScreens/navigators/accountsNavigator';
 import accountsScreen from './app/screens/listingScreens/accountsScreen';
+import homeScreenNavigator from './app/screens/homeScreenNavigator';
 
 export default function App() {
 
@@ -45,7 +46,7 @@ export default function App() {
           activeTintColor: "#ECECEC",
           labelStyle: { fontWeight: "bold" }
         }}>
-        <Drawer.Screen name="Home" component={homeScreen} />
+        <Drawer.Screen name="Home" component={homeScreenNavigator} />
         <Drawer.Screen name="Plants (Plantae)" component={plantaeNavigator} />
         <Drawer.Screen name="Animals (Animalia)" component={animaliaNavigator} />
         <Drawer.Screen name="Algae (Chromista)" component={chromistaNavigator} />

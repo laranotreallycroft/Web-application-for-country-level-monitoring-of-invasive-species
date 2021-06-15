@@ -5,17 +5,12 @@ import 'react-native-gesture-handler';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import adminScreen from '../adminScreen';
-import createSpeciesScreen from '../../createScreens/createSpeciesScreen';
-import createSpeciesGroupScreen from '../../createScreens/createSpeciesGroupScreen';
-import createCountyScreen from '../../createScreens/createCountyScreen';
-import createLocationScreen from '../../createScreens/createLocationScreen';
-import accountsScreen from '../../listingScreens/accountsScreen';
 import accountsNavigator from '../../listingScreens/navigators/accountsNavigator';
 import allSpeciesNavigator from '../../listingScreens/navigators/allSpeciesNavigator';
 import speciesGroupsNavigator from '../../listingScreens/navigators/speciesGroupsNavigator';
 import countiesNavigator from '../../listingScreens/navigators/countiesNavigator';
 import locationsNavigator from '../../listingScreens/navigators/locationsNavigator';
-import sightingRecordsScreen from '../../listingScreens/sightingRecordsScreen'
+import sightingRecordsNavigator from '../../listingScreens/navigators/sightingRecordsNavigator';
 
 
 export default function adminNavigator() {
@@ -33,7 +28,7 @@ export default function adminNavigator() {
                 <Stack.Screen name="SpeciesGroups" component={speciesGroupsNavigator} />
                 <Stack.Screen name="Counties" component={countiesNavigator} />
                 <Stack.Screen name="Locations" component={locationsNavigator} />
-                <Stack.Screen name="SightingRecords" component={sightingRecordsScreen} />
+                <Stack.Screen name="SightingRecords" component={sightingRecordsNavigator} />
             </Stack.Navigator>
         </NavigationContainer>
 

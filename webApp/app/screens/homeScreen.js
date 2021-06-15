@@ -1,6 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { useState, useEffect } from 'react';
-import { Button, Text, StyleSheet, View, FlatList } from 'react-native';
+import { Text, StyleSheet, View, FlatList } from 'react-native';
 import axios from "axios";
 function homeScreen({ navigation }) {
     const [users, setUsers] = useState("");
@@ -9,75 +9,72 @@ function homeScreen({ navigation }) {
     const [chromista, setChromista] = useState("");
 
     useEffect(() => {
-        const endpoint1 = "http://10.0.2.2:8080/account/getTop3";
-        axios.get(endpoint1).then(res => {
+        axios.get("http://10.0.2.2:8080/account/getTop3").then(res => {
+
             setUsers(res.data);
-            console.log(users)
-        }).catch((error) => {
-            console.log(error)
-            alert("Data get failure");
+
+            axios.get("http://10.0.2.2:8080/species/getTop50").then(res => {
+
+                setPlantae(res.data[0]);
+                setAnimalia(res.data[1]);
+                setChromista(res.data[2]);
+            }).catch(() => {
+                alert("Failed to get leaderboard species data");
+            });
+
+        }).catch(() => {
+            alert("Failed to get leaderboard account data");
         });
-
-        const endpoint2 = "http://10.0.2.2:8080/species/getTop50";
-        axios.get(endpoint2).then(res => {
-
-            setPlantae(res.data[0]);
-            setAnimalia(res.data[1]);
-            setChromista(res.data[2]);
-        }).catch((error) => {
-            console.log(error)
-            alert("Data get failure");
-        });
-
-
-
     }, []);
 
 
 
-    const Item = ({ name, count }) => (
-        <View >
-            <Text style={styles.listText}>{count}  {name}</Text>
-
+    const Item = ({ id, name, count }) => (
+        <View style={styles.listRow}>
+            <Text style={styles.listText} >{count}  </Text>
+            <Text style={styles.listText} onPress={() => navigation.navigate("Species", { speciesId: id })}>{name}</Text>
         </View>
     );
 
-
     var renderItem = ({ item }) => (
-        <Item name={item.name} count={item.count} />
+        <Item id={item.id} name={item.name} count={item.count} />
     );
-    if (users[0] != null)
+
+    if (chromista[0] != null)
         return (
             <View style={styles.container}>
                 <StatusBar style="auto" />
 
                 <View style={[styles.circle, styles.firstPlace]} >
-                    <Text style={[styles.medalText, styles.medalTextUsername]}>{users[0].username}</Text><Text style={[styles.medalText, styles.medalTextCount]}>{users[0].recordCount}</Text>
+                    <Text style={styles.medalText}>{users[0].username}</Text>
+                    <Text style={styles.medalText}>{users[0].recordCount}</Text>
                 </View>
                 <View style={[styles.circle, styles.secondPlace]} >
-                    <Text style={[styles.medalText, styles.medalTextUsername]}>{users[1].username}</Text><Text style={[styles.medalText, styles.medalTextCount]}>{users[1].recordCount}</Text>
+                    <Text style={styles.medalText}>{users[1].username}</Text>
+                    <Text style={styles.medalText}>{users[1].recordCount}</Text>
                 </View>
                 <View style={[styles.circle, styles.thirdPlace]}>
-                    <Text style={[styles.medalText, styles.medalTextUsername]}>{users[2].username}</Text><Text style={[styles.medalText, styles.medalTextCount]}>{users[2].recordCount}</Text>
+                    <Text style={styles.medalText}>{users[2].username}</Text>
+                    <Text style={styles.medalText}>{users[2].recordCount}</Text>
                 </View>
 
 
                 <FlatList
                     data={plantae}
                     renderItem={renderItem}
-                    keyExtractor={item => item.name}
+                    keyExtractor={item => item.id}
                     style={[styles.plantaeList, styles.lists]}
                 />
                 <FlatList
                     data={animalia}
                     renderItem={renderItem}
-                    keyExtractor={item => item.name}
+                    keyExtractor={item => item.id}
                     style={[styles.animaliaList, styles.lists]}
                 />
                 <FlatList
                     data={chromista}
                     renderItem={renderItem}
-                    keyExtractor={item => item.name}
+                    keyExtractor={item => item.id}
                     style={[styles.chromistaList, styles.lists]}
                 />
 
@@ -146,10 +143,9 @@ const styles = StyleSheet.create({
         fontWeight: "bold",
         fontSize: 15
     },
-    medalTextUsername: {
-
-    }, medalTextCount: {
-
+    listRow: {
+        flexDirection: "row",
+        marginRight: 14
     }
 });
 

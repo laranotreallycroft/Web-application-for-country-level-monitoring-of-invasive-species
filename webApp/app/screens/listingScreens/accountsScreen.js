@@ -9,40 +9,38 @@ export default function accountsScreen({ navigation }) {
     const [search, setSearch] = useState("");
     useEffect(() => {
 
-        const endpoint = "http://10.0.2.2:8080/account/getAll";
-        axios.get(endpoint).then(res => {
+        axios.get("http://10.0.2.2:8080/account/getAll").then(res => {
             setData(res.data)
             setFilteredData(res.data)
+            setSearch("")
 
         }).catch((error) => {
-            console.log(error)
-            alert("Data get failure");
+            alert("Failed to get accounts data");
         });
 
     }, []);
+
     const handleDelete = (id) => {
-        var endpoint = "http://10.0.2.2:8080/account/delete";
+        alert("Deleting species")
         const payload = { id: id }
-        axios.post(endpoint, payload).then(res => {
-            var endpoint2 = "http://10.0.2.2:8080/account/getAll";
-            axios.get(endpoint2).then(res => {
+        axios.post("http://10.0.2.2:8080/account/delete", payload).then(res => {
+
+            axios.get("http://10.0.2.2:8080/account/getAll").then(res => {
                 setData(res.data)
                 setFilteredData(res.data)
-
-            }).catch((error) => {
-                console.log(error)
-                alert("Data get failure");
+                setSearch("")
+            }).catch(() => {
+                alert("Failed to get accounts data");
             });
-        }).catch((error) => {
-            alert(error)
-            console.log(error)
+        }).catch(() => {
+            alert("Failed to get accounts data");
         });
 
 
 
     }
 
-    const Item = ({ username, id }) => (
+    const Item = ({ id, username }) => (
         <View style={styles.row} >
             <Text onPress={() => handleDelete(id)} style={styles.xButton}>x  </Text>
             <Text onPress={() => navigation.navigate("userScreen", { id: id })} style={styles.listText}>{username} </Text>
@@ -51,7 +49,7 @@ export default function accountsScreen({ navigation }) {
 
 
     var renderItem = ({ item }) => (
-        <Item username={item.username} id={item.id} />
+        <Item id={item.id} username={item.username} />
     );
 
 
@@ -63,35 +61,36 @@ export default function accountsScreen({ navigation }) {
     };
 
 
+    if (data != null)
+        return (
+            <View style={styles.container}>
 
-    return (
-        <View style={styles.container}>
-
-            <StatusBar style="auto" />
-            <View style={styles.header} >
-                <Text style={styles.headerText} > Accounts </Text>
-            </View>
-            <View
-                style={styles.SearchBar}
-            >
-                <TextInput
-                    autoCapitalize="none"
-                    autoCorrect={false}
-                    clearButtonMode="always"
-                    value={search}
-                    onChangeText={searchText => handleSearch(searchText)}
-                    placeholder="Search"
-                    style={styles.textInput}
+                <StatusBar style="auto" />
+                <View style={styles.header} >
+                    <Text style={styles.headerText} > Accounts </Text>
+                </View>
+                <View
+                    style={styles.SearchBar}
+                >
+                    <TextInput
+                        autoCapitalize="none"
+                        autoCorrect={false}
+                        clearButtonMode="always"
+                        value={search}
+                        onChangeText={searchText => handleSearch(searchText)}
+                        placeholder="Search"
+                        style={styles.textInput}
+                    />
+                </View>
+                <FlatList
+                    data={filteredData}
+                    renderItem={renderItem}
+                    keyExtractor={item => item.id}
+                    style={styles.list}
                 />
-            </View>
-            <FlatList
-                data={filteredData}
-                renderItem={renderItem}
-                keyExtractor={item => item.username}
-                style={styles.list}
-            />
-        </View >
-    );
+            </View >
+        );
+    else return <View style={styles.container}><Text>Loading...</Text></View>;
 }
 const styles = StyleSheet.create({
     container: {

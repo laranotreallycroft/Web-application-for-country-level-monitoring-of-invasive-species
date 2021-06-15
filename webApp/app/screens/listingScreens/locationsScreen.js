@@ -7,99 +7,92 @@ export default function locationsScreen({ navigation }) {
     const [data, setData] = useState("");
     const [filteredData, setFilteredData] = useState("");
     const [search, setSearch] = useState("");
+
     useEffect(() => {
 
-        const endpoint = "http://10.0.2.2:8080/location/getAll";
-        axios.get(endpoint).then(res => {
+        axios.get("http://10.0.2.2:8080/location/getAll").then(res => {
             setData(res.data)
             setFilteredData(res.data)
-
+            setSearch("")
         }).catch((error) => {
             console.log(error)
-            alert("Data get failure");
+            alert("Failed to get location data");
         });
 
     }, []);
-    const handleDelete = (name) => {
-        var endpoint = "http://10.0.2.2:8080/location/delete";
-        const payload = { name: name }
-        axios.post(endpoint, payload).then(res => {
-            var endpoint2 = "http://10.0.2.2:8080/location/getAll";
-            axios.get(endpoint2).then(res => {
+    const handleDelete = (id) => {
+        const payload = { id: id }
+        axios.post("http://10.0.2.2:8080/location/delete", payload).then(res => {
+            axios.get("http://10.0.2.2:8080/location/getAll").then(res => {
                 setData(res.data)
                 setFilteredData(res.data)
+                setSearch("")
 
             }).catch((error) => {
-                console.log(error)
-                alert("Data get failure");
+                alert("Failed to get location data");
             });
         }).catch((error) => {
-            alert(error)
-            console.log(error)
+            alert("Failed to get location data")
         });
 
 
 
     }
 
-    const Item = ({ name }) => (
+    const Item = ({ id, name, county }) => (
         <View style={styles.row} >
-            <Text onPress={() => handleDelete(name)} style={styles.xButton}>x  </Text>
-            <Text style={styles.listText}>{name} </Text>
+            <Text onPress={() => handleDelete(id)} style={styles.xButton}>x  </Text>
+            <Text style={styles.listText}>{name} - {county}</Text>
         </View>
     );
 
 
     var renderItem = ({ item }) => (
-        <Item name={item.name} />
+        <Item id={item.id} name={item.name} county={item.county} />
     );
 
 
     const handleSearch = text => {
         const formattedQuery = text.toLowerCase();
-        const filteredData = data.filter((item) => item.name.toLowerCase().includes(formattedQuery)).map(({ name }) => ({ name }));
+        const filteredData = data.filter((item) => item.name.toLowerCase().includes(formattedQuery)).map(({ id, name, county }) => ({ id, name, county }));
         setFilteredData(filteredData);
         setSearch(text);
     };
 
 
 
-    return (
-        <View style={styles.container}>
+    if (data != null)
+        return (
+            <View style={styles.container}>
 
-            <StatusBar style="auto" />
-            <View style={styles.header} >
-                <Text style={styles.headerText} > Location </Text>
-                <TouchableOpacity
-                    activeOpacity={0.5}
-                    style={styles.textContainer}
-                    onPress={() => navigation.navigate("AddLocation")}>
+                <StatusBar style="auto" />
+                <View style={styles.header} >
+                    <Text style={styles.headerText} > Locations</Text>
+                    <Text onPress={() => navigation.navigate("AddLocation")} style={[styles.headerText, styles.addText]}>+</Text>
+                </View>
 
-                    <Text style={styles.headerText}>+</Text>
-                </TouchableOpacity>
-            </View>
-
-            <View
-                style={styles.SearchBar}
-            >
-                <TextInput
-                    autoCapitalize="none"
-                    autoCorrect={false}
-                    clearButtonMode="always"
-                    value={search}
-                    onChangeText={searchText => handleSearch(searchText)}
-                    placeholder="Search"
-                    style={styles.textInput}
+                <View
+                    style={styles.SearchBar}
+                >
+                    <TextInput
+                        autoCapitalize="none"
+                        autoCorrect={false}
+                        clearButtonMode="always"
+                        value={search}
+                        onChangeText={searchText => handleSearch(searchText)}
+                        placeholder="Search"
+                        style={styles.textInput}
+                    />
+                </View>
+                <FlatList
+                    data={filteredData}
+                    renderItem={renderItem}
+                    keyExtractor={item => item.id}
+                    style={styles.list}
                 />
-            </View>
-            <FlatList
-                data={filteredData}
-                renderItem={renderItem}
-                keyExtractor={item => item.name}
-                style={styles.list}
-            />
-        </View >
-    );
+            </View >
+        );
+    else return <View style={styles.container}><Text>Loading...</Text></View>;
 }
 const styles = StyleSheet.create({
     container: {
@@ -110,6 +103,7 @@ const styles = StyleSheet.create({
     header: {
         flexDirection: "row",
         alignItems: "center",
+        justifyContent: "center",
         top: 30,
         borderColor: "#ccd5ae",
         backgroundColor: "#ccd5ae",
@@ -119,14 +113,13 @@ const styles = StyleSheet.create({
         borderRadius: 10
     }
     , headerText: {
-        left: 100,
-        paddingRight: 60,
         fontSize: 25,
         fontStyle: "italic",
         color: "#5D534F",
         fontWeight: "bold"
     },
-    textContainer: {
+    addText: {
+        paddingLeft: 20
     },
     list: {
         marginTop: 50,

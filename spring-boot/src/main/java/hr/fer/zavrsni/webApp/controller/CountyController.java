@@ -18,8 +18,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import hr.fer.zavrsni.webApp.dao.CountyRepository;
 import hr.fer.zavrsni.webApp.dao.LocationRepository;
+import hr.fer.zavrsni.webApp.dao.SightingRecordRepository;
 import hr.fer.zavrsni.webApp.model.County;
 import hr.fer.zavrsni.webApp.model.Location;
+import hr.fer.zavrsni.webApp.model.SightingRecord;
 import hr.fer.zavrsni.webApp.model.SpeciesGroup;
 
 @CrossOrigin(origins = "http://localhost:3000")
@@ -32,12 +34,15 @@ public class CountyController {
 	@Autowired
 	private CountyRepository countyRepository;
 
+	@Autowired
+	private SightingRecordRepository sightingRecordRepository;
+
 	@GetMapping("/county/getAll")
-	public List<Map<String, String>> getCounties() {
-		List<Map<String, String>> response = new ArrayList<>();
+	public List<Map<String, Object>> getCounties() {
+		List<Map<String, Object>> response = new ArrayList<>();
 		for (County county : countyRepository.findAll()) {
-			Map<String, String> countyMap = new HashMap<>();
-			countyMap.put("id", Integer.toString(county.getCountyId()));
+			Map<String, Object> countyMap = new HashMap<>();
+			countyMap.put("id", county.getCountyId());
 			countyMap.put("name", county.getName());
 
 			response.add(countyMap);
@@ -47,11 +52,11 @@ public class CountyController {
 	}
 
 	@PostMapping("/county/getLocations")
-	public List<Map<String, String>> getLocationFromCounty(@RequestBody Map<String, Object> postObj) {
-		List<Map<String, String>> response = new ArrayList<>();
+	public List<Map<String, Object>> getLocationFromCounty(@RequestBody Map<String, Object> postObj) {
+		List<Map<String, Object>> response = new ArrayList<>();
 		for (Location location : countyRepository.findByName(postObj.get("county").toString()).getLocations()) {
-			Map<String, String> locationMap = new HashMap<>();
-			locationMap.put("id", Integer.toString(location.getLocationId()));
+			Map<String, Object> locationMap = new HashMap<>();
+			locationMap.put("id", location.getLocationId());
 			locationMap.put("name", location.getName());
 			response.add(locationMap);
 
@@ -66,12 +71,18 @@ public class CountyController {
 		County county;
 
 		try {
-			county = countyRepository.findByCountyId(Integer.parseInt(postObj.get("id").toString()));
+			county = countyRepository.findByCountyId((Integer) postObj.get("id"));
 		} catch (NoSuchElementException | IllegalArgumentException e) {
 			response.put("message", "Invalid location id.");
 			return response;
 		}
 
+		for (Location location : county.getLocations()) {
+			for (SightingRecord record : location.getRecords()) {
+				sightingRecordRepository.delete(record);
+			}
+			locationRepository.delete(location);
+		}
 		countyRepository.delete(county);
 
 		response.put("message", "County successfully deleted.");

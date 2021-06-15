@@ -33,34 +33,34 @@ public class AccountController {
 	private LocationRepository locationRepository;
 
 	@GetMapping("/account/getAll")
-	public List<Map<String, String>> getAccounts() {
-		List<Map<String, String>> response = new ArrayList<>();
+	public List<Map<String, Object>> getAccounts() {
+		List<Map<String, Object>> response = new ArrayList<>();
 		for (Account account : accountRepository.findAll()) {
-			Map<String, String> accountMap = new HashMap<>();
+			Map<String, Object> accountMap = new HashMap<>();
 
-			accountMap.put("id", Integer.toString(account.getUserId()));
+			accountMap.put("id", account.getUserId());
 			accountMap.put("username", account.getUsername());
 
 			response.add(accountMap);
 
 		}
-		response.sort((o1, o2) -> o2.get("username").compareTo(o2.get("username")));
+		response.sort((o1, o2) -> ((String) o2.get("username")).compareTo((String) o2.get("username")));
 
 		return response;
 	}
 
 	@GetMapping("/account/getTop3")
-	public List<Map<String, String>> getTop3Accounts() {
-		List<Map<String, String>> response = new ArrayList<>();
+	public List<Map<String, Object>> getTop3Accounts() {
+		List<Map<String, Object>> response = new ArrayList<>();
 		List<Account> accountList = new LinkedList<>();
 		for (Account account : accountRepository.findAll()) {
 			accountList.add(account);
 		}
 		accountList.sort((o1, o2) -> o2.getRecords().size() - o1.getRecords().size());
 		for (int i = 0; i < 3; i++) {
-			Map<String, String> accountMap = new HashMap<>();
+			Map<String, Object> accountMap = new HashMap<>();
 			accountMap.put("username", accountList.get(i).getUsername());
-			accountMap.put("recordCount", Integer.toString(accountList.get(i).getRecords().size()));
+			accountMap.put("recordCount", accountList.get(i).getRecords().size());
 			response.add(accountMap);
 		}
 		return response;
@@ -72,7 +72,7 @@ public class AccountController {
 		Account account;
 
 		try {
-			account = accountRepository.findByUserId(Integer.parseInt(postObj.get("id").toString()));
+			account = accountRepository.findByUserId((Integer) postObj.get("id"));
 		} catch (NoSuchElementException | IllegalArgumentException e) {
 			response.put("message", "Invalid account id.");
 			return response;
@@ -98,7 +98,7 @@ public class AccountController {
 		Account account;
 
 		try {
-			account = accountRepository.findByUserId(Integer.parseInt(postObj.get("id").toString()));
+			account = accountRepository.findByUserId((Integer) postObj.get("id"));
 		} catch (NoSuchElementException | IllegalArgumentException e) {
 			response.put("message", "Invalid account id.");
 			return response;

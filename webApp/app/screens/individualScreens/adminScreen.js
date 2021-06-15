@@ -1,8 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
-import React, { useState } from 'react';
-import { StyleSheet, View, Button, FlatList, Text, TouchableOpacity } from 'react-native';
-import axios from "axios";
-import { color } from 'react-native-reanimated';
+import React from 'react';
+import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
 
 
 
@@ -62,12 +60,8 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: '#e9edc9',
         alignItems: "center",
-
-
     },
-
     textContainer: {
-
         top: 120,
         width: 300,
         backgroundColor: "#929E69",

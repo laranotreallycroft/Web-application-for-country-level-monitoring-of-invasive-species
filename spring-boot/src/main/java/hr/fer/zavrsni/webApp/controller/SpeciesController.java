@@ -20,9 +20,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import hr.fer.zavrsni.webApp.dao.SightingRecordRepository;
 import hr.fer.zavrsni.webApp.dao.SpeciesGroupRepository;
 import hr.fer.zavrsni.webApp.dao.SpeciesRepository;
 import hr.fer.zavrsni.webApp.model.Account;
+import hr.fer.zavrsni.webApp.model.SightingRecord;
 import hr.fer.zavrsni.webApp.model.Species;
 import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
@@ -37,12 +39,15 @@ public class SpeciesController {
 	@Autowired
 	private SpeciesGroupRepository speciesGroupRepository;
 
+	@Autowired
+	private SightingRecordRepository sightingRecordRepository;
+
 	@GetMapping("/species/getAll")
-	public List<Map<String, String>> getAllSpecies() {
-		List<Map<String, String>> response = new ArrayList<>();
+	public List<Map<String, Object>> getAllSpecies() {
+		List<Map<String, Object>> response = new ArrayList<>();
 		for (Species species : speciesRepository.findAll()) {
-			Map<String, String> speciesMap = new HashMap<>();
-			speciesMap.put("id", Integer.toString(species.getSpeciesId()));
+			Map<String, Object> speciesMap = new HashMap<>();
+			speciesMap.put("id", species.getSpeciesId());
 			speciesMap.put("name", species.getSpeciesName());
 			speciesMap.put("description", species.getDescription());
 			speciesMap.put("speciesGroupName", species.getSpeciesGroup().getSpeciesGroupName());
@@ -72,26 +77,23 @@ public class SpeciesController {
 
 			if (plantaeList.size() > i && plantaeList.get(i).getRecords().size() > 0) {
 				JSONObject plantaeJson = new JSONObject();
-				String shortenedName = plantaeList.get(i).getSpeciesName().split(" ")[0] + " "
-						+ plantaeList.get(i).getSpeciesName().split(" ")[1];
-				plantaeJson.put("name", shortenedName);
+				plantaeJson.put("id", plantaeList.get(i).getSpeciesId());
+				plantaeJson.put("name", plantaeList.get(i).getShortenedSpeciesName());
 				plantaeJson.put("count", Integer.toString(plantaeList.get(i).getRecords().size()));
 				plantaeJsonArary.add(plantaeJson);
 
 			}
 			if (animaliaList.size() > i && animaliaList.get(i).getRecords().size() > 0) {
 				JSONObject animaliaJson = new JSONObject();
-				String shortenedName = animaliaList.get(i).getSpeciesName().split(" ")[0] + " "
-						+ animaliaList.get(i).getSpeciesName().split(" ")[1];
-				animaliaJson.put("name", shortenedName);
+				animaliaJson.put("id", animaliaList.get(i).getSpeciesId());
+				animaliaJson.put("name", animaliaList.get(i).getShortenedSpeciesName());
 				animaliaJson.put("count", Integer.toString(animaliaList.get(i).getRecords().size()));
 				animaliaJsonArary.add(animaliaJson);
-			} 
+			}
 			if (chromistaList.size() > i && chromistaList.get(i).getRecords().size() > 0) {
 				JSONObject chromistaJson = new JSONObject();
-				String shortenedName = chromistaList.get(i).getSpeciesName().split(" ")[0] + " "
-						+ chromistaList.get(i).getSpeciesName().split(" ")[1];
-				chromistaJson.put("name", shortenedName);
+				chromistaJson.put("id", chromistaList.get(i).getSpeciesId());
+				chromistaJson.put("name", chromistaList.get(i).getShortenedSpeciesName());
 				chromistaJson.put("count", Integer.toString(chromistaList.get(i).getRecords().size()));
 				chromistaJsonArary.add(chromistaJson);
 			}
@@ -109,13 +111,13 @@ public class SpeciesController {
 		Species species;
 
 		try {
-			species = speciesRepository.findBySpeciesName(postObj.get("name").toString());
+			species = speciesRepository.findBySpeciesId((Integer) postObj.get("id"));
 		} catch (NoSuchElementException | IllegalArgumentException e) {
-			response.put("message", "Invalid account id.");
+			response.put("message", "Invalid species id.");
 			return response;
 		}
 
-		response.put("id", Integer.toString(species.getSpeciesId()));
+		response.put("id", species.getSpeciesId());
 		response.put("name", species.getSpeciesName());
 		response.put("description", species.getDescription());
 		byte[] base64 = Base64.getEncoder().encode(species.getPhotograph());
@@ -139,12 +141,14 @@ public class SpeciesController {
 		Species species;
 
 		try {
-			species = speciesRepository.findBySpeciesId(Integer.parseInt(postObj.get("id").toString()));
+			species = speciesRepository.findBySpeciesId((Integer) postObj.get("id"));
 		} catch (NoSuchElementException | IllegalArgumentException e) {
 			response.put("message", "Invalid species id.");
 			return response;
 		}
-
+		for (SightingRecord record : species.getRecords()) {
+			sightingRecordRepository.delete(record);
+		}
 		speciesRepository.delete(species);
 
 		response.put("message", "Species successfully deleted.");

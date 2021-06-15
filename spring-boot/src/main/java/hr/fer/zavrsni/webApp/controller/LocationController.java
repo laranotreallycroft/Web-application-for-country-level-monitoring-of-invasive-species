@@ -18,7 +18,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import hr.fer.zavrsni.webApp.dao.CountyRepository;
 import hr.fer.zavrsni.webApp.dao.LocationRepository;
+import hr.fer.zavrsni.webApp.dao.SightingRecordRepository;
 import hr.fer.zavrsni.webApp.model.Location;
+import hr.fer.zavrsni.webApp.model.SightingRecord;
 import hr.fer.zavrsni.webApp.model.SpeciesGroup;
 
 @CrossOrigin(origins = "http://localhost:3000")
@@ -27,9 +29,12 @@ public class LocationController {
 
 	@Autowired
 	private LocationRepository locationRepository;
-	
+
 	@Autowired
 	private CountyRepository countyRepository;
+
+	@Autowired
+	private SightingRecordRepository sightingRecordRepository;
 
 	@GetMapping("/location/getAll")
 	public List<Map<String, String>> getlocations() {
@@ -46,19 +51,19 @@ public class LocationController {
 		return response;
 	}
 
-
 	@PostMapping(value = "/location/delete")
 	public Map<String, String> deleteLocation(@RequestBody Map<String, Object> postObj) {
 		Map<String, String> response = new HashMap<>();
 		Location location;
 
 		try {
-			location = locationRepository.findByLocationId(Integer.parseInt(postObj.get("id").toString()));
+			location = locationRepository.findByLocationId((Integer) postObj.get("id"));
 		} catch (NoSuchElementException | IllegalArgumentException e) {
 			response.put("message", "Invalid location id.");
 			return response;
 		}
-
+		for (SightingRecord record : location.getRecords())
+			sightingRecordRepository.delete(record);
 		locationRepository.delete(location);
 
 		response.put("message", "Location successfully deleted.");

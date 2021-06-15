@@ -3,53 +3,53 @@ import React, { useState, useEffect } from 'react';
 import { Button, Text, StyleSheet, View, Image, ScrollView, TextInput } from 'react-native';
 import axios from "axios";
 export default function speciesScreen({ route, navigation }) {
-    const { speciesName } = route.params;
+    const { speciesId } = route.params;
     const [data, setData] = useState("");
 
     useEffect(() => {
         const endpoint = "http://10.0.2.2:8080/species/getOne";
-        const payload = { name: speciesName }
+        const payload = { id: speciesId }
         axios.post(endpoint, payload).then(res => {
-
             setData(res.data);
         }).catch((error) => {
-            console.log(error)
-            alert("Data get failure");
+            alert("Failed to get this species data");
         });
 
     }, []);
+    if (data != null)
+        return (
+            <View style={styles.container}>
+                <StatusBar style="auto" />
+                <ScrollView style={styles.scroll}>
+                    <View style={styles.textContainer}>
+                        <Text style={styles.textTitle}>Species : </Text>
+                        <Text style={styles.text}>{data.name}</Text>
+                    </View>
 
-    return (
-        <View style={styles.container}>
-            <StatusBar style="auto" />
-            <ScrollView style={styles.scroll}>
-                <View style={styles.textContainer}>
-                    <Text style={styles.textTitle}>Species : </Text>
-                    <Text style={styles.text}>{data.name}</Text>
-                </View>
+                    <View style={styles.textContainer}>
+                        <Text style={styles.textTitle}>Species group: </Text>
+                        <Text style={styles.text}>{data.speciesGroup} </Text>
+                    </View>
+                    <View style={styles.textContainer}>
+                        <Text style={styles.textTitle}>Description: </Text>
+                        <Text style={styles.text}>{data.description}</Text>
+                    </View>
+                    <View style={styles.textContainer}>
+                        <Text style={styles.textTitle}>Sighting count: </Text>
+                        <Text style={styles.text}>{data.recordCount} </Text>
+                    </View>
+                    <Image style={styles.image} source={{ uri: `data:image/jpg;base64,${data.photograph}` }} />
+                </ScrollView></View >
+        );
+    else return <View style={styles.container}><Text>Loading...</Text></View>;
 
-                <View style={styles.textContainer}>
-                    <Text style={styles.textTitle}>Species group: </Text>
-                    <Text style={styles.text}>{data.speciesGroup} </Text>
-                </View>
-                <View style={styles.textContainer}>
-                    <Text style={styles.textTitle}>Description: </Text>
-                    <Text style={styles.text}>{data.description}</Text>
-                </View>
-                <View style={styles.textContainer}>
-                    <Text style={styles.textTitle}>Sighting count: </Text>
-                    <Text style={styles.text}>{data.recordCount} </Text>
-                </View>
-                <Image style={styles.image} source={{ uri: `data:image/jpg;base64,${data.photograph}` }} />
-            </ScrollView></View >
-    );
 }
 const styles = StyleSheet.create({
     container: {
-
         flex: 1,
         alignItems: 'stretch',
-        backgroundColor: '#e9edc9'
+        backgroundColor: '#e9edc9',
+        justifyContent: 'flex-end'
     },
     scroll: {
         top: 60,
