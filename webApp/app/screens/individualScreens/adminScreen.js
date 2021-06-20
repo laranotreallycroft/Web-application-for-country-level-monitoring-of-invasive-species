@@ -15,9 +15,10 @@ export default function adminScreen({ navigation }) {
 
 
     var handleLogout = () => {
-        storeId(0);
+        removeId()
         navigation.navigate("Login")
     }
+
 
 
     return (

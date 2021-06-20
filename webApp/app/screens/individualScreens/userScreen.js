@@ -41,9 +41,11 @@ export default function userScreen({ route, navigation }) {
 
     const Item = ({ species, location, id }) => (
         <View style={styles.flex}>
-            <Text onPress={() =>
-                navigation.navigate("RecordScreen", { recordId: id })} style={styles.listText}
-            > {species}</Text>
+            {admin == false ?
+                <Text onPress={() =>
+                    navigation.navigate("RecordScreen", { recordId: id })} style={styles.listText}
+                > {species}</Text>
+                : <Text> {species}</Text>}
             <Text> {location}</Text>
         </View >
     );
