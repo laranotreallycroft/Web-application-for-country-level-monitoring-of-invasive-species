@@ -87,7 +87,7 @@ export default function accountsScreen({ navigation }) {
                 <FlatList
                     data={filteredData}
                     renderItem={renderItem}
-                    keyExtractor={item => item.id}
+                    keyExtractor={item => "" + item.id}
                     style={styles.list}
                 />
             </View >
