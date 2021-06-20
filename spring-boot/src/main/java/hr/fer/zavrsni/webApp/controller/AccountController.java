@@ -77,7 +77,7 @@ public class AccountController {
 			response.put("message", "Invalid account id.");
 			return response;
 		}
-
+		response.put("role", account.getRoleAdmin());
 		response.put("username", account.getUsername());
 		response.put("recordCount", account.getRecords().size());
 		JSONArray recordsArr = new JSONArray();
@@ -128,7 +128,31 @@ public class AccountController {
 		System.out.println("HERE");
 		Integer lastId = accountRepository.findFirstByOrderByUserIdDesc().getUserId();
 		Account newAccount = new Account(lastId + 1, postObj.get("username").toString(),
-				postObj.get("password").toString());
+				postObj.get("password").toString(), false);
+		accountRepository.save(newAccount);
+		response.put("message", "Account successfully created.");
+		return response;
+	}
+
+	@PostMapping(value = "/account/createAdmin")
+	public Map<String, String> createAdminAccount(@RequestBody Map<String, Object> postObj) {
+
+		Map<String, String> response = new HashMap<>();
+		Account account;
+
+		try {
+			account = accountRepository.findByUsername(postObj.get("username").toString());
+
+		} catch (NoSuchElementException | IllegalArgumentException e) {
+			response.put("message", "Some error?");
+			return response;
+		}
+		if (account != null)
+			throw new IllegalArgumentException("Account with this username already exists. Please choose another one.");
+		System.out.println("HERE");
+		Integer lastId = accountRepository.findFirstByOrderByUserIdDesc().getUserId();
+		Account newAccount = new Account(lastId + 1, postObj.get("username").toString(),
+				postObj.get("password").toString(), true);
 		accountRepository.save(newAccount);
 		response.put("message", "Account successfully created.");
 		return response;

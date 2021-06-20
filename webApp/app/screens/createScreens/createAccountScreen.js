@@ -1,8 +1,11 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { useState } from 'react';
-import { Button, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Button, StyleSheet, TextInput, View } from 'react-native';
 import axios from "axios";
-export default function createAccountScreen({ navigation }) {
+
+export default function createAccountScreen({ route, navigation }) {
+
+    const { admin } = route.params;
 
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
@@ -22,7 +25,9 @@ export default function createAccountScreen({ navigation }) {
             return
         }
 
-        const endpoint = "http://10.0.2.2:8080/account/create";
+        var endpoint;
+        if (admin == false) endpoint = "http://10.0.2.2:8080/account/create";
+        else endpoint = "http://10.0.2.2:8080/account/createAdmin";
 
         const user_object = {
             username: username,
@@ -32,16 +37,9 @@ export default function createAccountScreen({ navigation }) {
 
         axios.post(endpoint, user_object).then(res => {
             alert("Registration success");
-            /*   localStorage.setItem("role", res.data.authorities[0].authority)
-              localStorage.setItem("username", res.data.username);
-               this.setState({
-                   islogged: true
-               });
-            
-                if (res.data.authorities[0].authority == "ROLE_UDOMITELJ")
-               this.props.history.push("/home-page");*/
-
-            navigation.navigate('Home')
+            if (admin == false)
+                navigation.navigate('Login')
+            else navigation.navigate("Accounts")
 
         }).catch((error) => {
             console.log(error)

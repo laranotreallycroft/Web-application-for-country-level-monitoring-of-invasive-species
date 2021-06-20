@@ -7,7 +7,6 @@ import { createStackNavigator } from '@react-navigation/stack';
 import homeScreen from './homeScreen';
 import speciesScreen from './individualScreens/speciesScreen'
 
-
 export default function homeScreenNavigator() {
 
     const Stack = createStackNavigator();

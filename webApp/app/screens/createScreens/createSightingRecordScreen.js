@@ -4,11 +4,12 @@ import { Button, StyleSheet, Text, TextInput, View, TouchableOpacity } from 'rea
 import { Picker } from '@react-native-picker/picker';
 import MapView, { Marker } from 'react-native-maps';
 import axios from "axios";
-import _, { map } from 'underscore';
 import * as ImagePicker from 'expo-image-picker';
-import symbolicateStackTrace from 'react-native/Libraries/Core/Devtools/symbolicateStackTrace';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 export default function createSightingRecordScreen(props) {
 
+    const [userId, setUserId] = useState("");
     const [description, setDescription] = useState("");
     const [photograph, setPhotograph] = useState("");
     const [galleryPermission, setGalleryPermission] = useState(null);
@@ -23,6 +24,8 @@ export default function createSightingRecordScreen(props) {
     const [countyData, setCountyData] = useState([]);
 
     const [marker, setMarker] = useState();
+
+
 
     useEffect(() => {
         const endpoint = "http://10.0.2.2:8080/speciesGroup/getAll";
@@ -46,7 +49,21 @@ export default function createSightingRecordScreen(props) {
 
 
 
+
     }, []);
+
+    const getUserId = async () => {
+        try {
+            const value = await AsyncStorage.getItem('@Id')
+            if (value !== null) {
+                setUserId(value)
+            }
+        } catch (e) {
+            // error reading value
+        }
+    }
+
+
 
 
     const handleSelectSpeciesGroup = (speciesGroup) => {
@@ -125,6 +142,7 @@ export default function createSightingRecordScreen(props) {
 
     const handleCreateSightingRecord = () => {
 
+        getUserId()
         if (species == "") {
             alert("Species cannot be empty!")
             return
@@ -135,10 +153,10 @@ export default function createSightingRecordScreen(props) {
         }
         const endpoint = "http://10.0.2.2:8080/record/create";
 
-
         if (marker == null)
 
             var species_object = {
+                userId: userId,
                 description: description,
                 locationDescription: locationDescription,
                 photograph: photograph,
@@ -149,6 +167,7 @@ export default function createSightingRecordScreen(props) {
             };
 
         else var species_object = {
+            userId: userId,
             description: description,
             locationDescription: locationDescription,
             photograph: photograph,

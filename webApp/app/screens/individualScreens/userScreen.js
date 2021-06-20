@@ -1,25 +1,43 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { useState, useEffect } from 'react';
-import { Text, StyleSheet, View, ScrollView, FlatList } from 'react-native';
+import { Text, StyleSheet, View, ScrollView, FlatList, Button } from 'react-native';
 import axios from "axios";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 export default function userScreen({ route, navigation }) {
 
-    const id = 1
-    //const { id }route.params
+    const { id, admin } = route.params;
 
     const [data, setData] = useState("");
 
     useEffect(() => {
+
         const payload = { id: id }
         axios.post("http://10.0.2.2:8080/account/getOne", payload).then(res => {
 
             setData(res.data);
 
         }).catch(() => {
-            alert("Failed to get leaderboard species data");
+            alert("Failed to get account");
         });
 
     }, []);
+
+    var removeId = async () => {
+        try {
+            await AsyncStorage.removeItem('@Id')
+        } catch (e) {
+            // remove error
+        }
+
+    }
+
+
+    var handleLogout = () => {
+        removeId()
+        navigation.navigate("Login")
+    }
+
 
     const Item = ({ species, location, id }) => (
         <View style={styles.flex}>
@@ -58,14 +76,20 @@ export default function userScreen({ route, navigation }) {
                             <FlatList
                                 data={data.records}
                                 renderItem={renderItem}
-                                keyExtractor={item => item.id}
+                                keyExtractor={item => "" + item.id}
 
                             />
                         </View>
                     </View>
-
-
-
+                    {admin == false &&
+                        <View style={styles.buttonRow}>
+                            <Button
+                                title="logout"
+                                color='#929E69'
+                                onPress={handleLogout}
+                            />
+                        </View>
+                    }
                 </ScrollView>
             </View >
         );
@@ -97,6 +121,14 @@ const styles = StyleSheet.create({
         borderWidth: 20,
         borderRadius: 20,
         alignItems: "center"
+    }, buttonRow: {
+        marginHorizontal: 70,
+        marginBottom: 20,
+        marginTop: 10,
+        display: "flex",
+        flexDirection: "row",
+        justifyContent: 'space-around'
+
     },
     text: {
         paddingRight: 100,

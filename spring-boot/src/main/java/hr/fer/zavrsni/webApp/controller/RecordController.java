@@ -17,9 +17,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import hr.fer.zavrsni.webApp.dao.AccountRepository;
 import hr.fer.zavrsni.webApp.dao.LocationRepository;
 import hr.fer.zavrsni.webApp.dao.SightingRecordRepository;
 import hr.fer.zavrsni.webApp.dao.SpeciesRepository;
+import hr.fer.zavrsni.webApp.model.Account;
 import hr.fer.zavrsni.webApp.model.SightingRecord;
 
 @CrossOrigin(origins = "http://localhost:3000")
@@ -35,6 +37,9 @@ public class RecordController {
 	@Autowired
 	private SpeciesRepository speciesRepository;
 
+	@Autowired
+	private AccountRepository accountRepository;
+
 	@GetMapping("/record/getAll")
 	public List<Map<String, Object>> getRecords() {
 		List<Map<String, Object>> response = new ArrayList<>();
@@ -48,8 +53,7 @@ public class RecordController {
 			recordMap.put("locationDescription", sightingRecord.getLocationDescription());
 			recordMap.put("location", sightingRecord.getLocationId().toString());
 			recordMap.put("speciesId", sightingRecord.getSpecies().getSpeciesId());
-			recordMap.put("userId",
-					sightingRecord.getUser() == null ? null : sightingRecord.getUser().getUserId());
+			recordMap.put("userId", sightingRecord.getUser() == null ? null : sightingRecord.getUser().getUserId());
 
 			response.add(recordMap);
 		}
@@ -118,39 +122,20 @@ public class RecordController {
 			double lon = (Double) (postObj.get("coordinatesLon"));
 			pt = fac.createPoint(new Coordinate(lat, lon));
 		}
-
+		Account account;
+		if (postObj.get("userId").toString()=="") {
+			account = null;
+		} else
+			account = accountRepository.findByUserId(Integer.parseInt(postObj.get("userId").toString()));
 		SightingRecord newSightingRecord = new SightingRecord(lastId + 1, postObj.get("description").toString(), pt,
 				postObj.get("locationDescription").toString(),
 				locationRepository.findByName(postObj.get("location").toString()),
 				postObj.get("photograph").toString().getBytes(),
-				speciesRepository.findBySpeciesName(postObj.get("species").toString()), null);
+				speciesRepository.findBySpeciesName(postObj.get("species").toString()), account);
 		sightingRecordRepository.save(newSightingRecord);
 		response.put("message", "Sighting record successfully created.");
 
 		return response;
 	}
 
-	/*
-	 * @PostMapping("/location/edit") public Map<String, String>
-	 * editLocation(@RequestParam("id") Integer id,@RequestParam("name") String
-	 * name,@RequestParam("county") String county) { Map<String, String> response =
-	 * new HashMap<>();
-	 * 
-	 * Location location;
-	 * 
-	 * try { location = locationRepository.findByLocationId(id); } catch
-	 * (NoSuchElementException | IllegalArgumentException ex) {
-	 * response.put("message", "Ne postoji mjesto sa predanim imenom");
-	 * 
-	 * return response; }
-	 * 
-	 * try { location.setName(name); location.setCounty(county);
-	 * locationRepository.save(location); } catch (Exception e) {
-	 * response.put("message", "Promijenjeni podatci nisu ispravni!"); return
-	 * response; }
-	 * 
-	 * response.put("message", "Mjesto uspješno izmjenjeno!");
-	 * 
-	 * return response; }
-	 */
 }

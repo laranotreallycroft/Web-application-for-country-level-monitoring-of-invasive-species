@@ -1,8 +1,10 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { useState, useEffect } from 'react';
-import { Button, Text, StyleSheet, View, Image, ScrollView, TextInput } from 'react-native';
+import { Text, StyleSheet, View, Image, ScrollView } from 'react-native';
 import axios from "axios";
+
 export default function speciesScreen({ route, navigation }) {
+
     const { speciesId } = route.params;
     const [data, setData] = useState("");
 

@@ -1,20 +1,11 @@
 import { StatusBar } from 'expo-status-bar';
-import React, { useState, useEffect } from 'react';
-import { Button, StyleSheet, Text, TextInput, View, TouchableOpacity } from 'react-native';
-import { Picker } from '@react-native-picker/picker';
+import React, { useState } from 'react';
+import { Button, StyleSheet, TextInput, View } from 'react-native';
 import axios from "axios";
-import * as ImagePicker from 'expo-image-picker';
+
 export default function createSpeciesGroupScreen(props) {
 
     const [speciesGroupName, setSpeciesGroupName] = useState("");
-
-
-
-
-
-
-
-
 
     const handleCreateSpeciesGroup = () => {
         if (speciesGroupName == "") {

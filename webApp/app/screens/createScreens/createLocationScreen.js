@@ -1,14 +1,13 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { useState, useEffect } from 'react';
-import { Button, StyleSheet, Text, TextInput, View, TouchableOpacity } from 'react-native';
+import { Button, StyleSheet, TextInput, View } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import axios from "axios";
-import _, { map } from 'underscore';
+
 export default function createLocationScreen(props) {
 
     const [locationName, setLocationName] = useState("");
     const [county, setcounty] = useState("");
-
     const [countyData, setCountyData] = useState([]);
 
 

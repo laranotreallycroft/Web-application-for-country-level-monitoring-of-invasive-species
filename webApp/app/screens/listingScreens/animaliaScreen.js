@@ -4,6 +4,7 @@ import { Text, StyleSheet, View, FlatList, TextInput } from 'react-native';
 import axios from "axios";
 
 export default function animaliaScreen({ navigation }) {
+
     const [data, setData] = useState("");
     const [filteredData, setFilteredData] = useState("");
     const [search, setSearch] = useState("");

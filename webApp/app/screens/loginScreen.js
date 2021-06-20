@@ -1,11 +1,32 @@
 import { StatusBar } from 'expo-status-bar';
-import React, { useState } from 'react';
-import { Button, StyleSheet, Text, TextInput, View } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { Button, StyleSheet, TextInput, View } from 'react-native';
 import axios from "axios";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 function loginScreen({ navigation }) {
 
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
+
+    useEffect(
+        () =>
+            navigation.addListener('beforeRemove', (e) => {
+
+                // Prevent default behavior of leaving the screen
+                e.preventDefault();
+
+            }),
+        []
+    );
+
+    const storeId = async (value) => {
+        try {
+            await AsyncStorage.setItem('@Id', "" + value)
+        } catch (e) {
+            console.log(e)
+        }
+    }
 
     const handleLogin = () => {
 
@@ -18,18 +39,14 @@ function loginScreen({ navigation }) {
 
 
         axios.post(endpoint, user_object).then(res => {
-            /*localStorage.setItem("role", res.data.authorities[0].authority)
-            localStorage.setItem("username", res.data.username);
-            this.setState({
-            islogged: true
-             });*/
-            console.log(res)
+            storeId(res.data.id);
             alert("Authentication success");
-            if (username == "admin")
+            if (res.data.role === true)
                 navigation.navigate('Admin')
-            else navigation.navigate('Home')
-            // if (res.data.authorities[0].authority == "ROLE_UDOMITELJ")
-            // this.props.history.push("/home-page");
+            else
+                navigation.navigate('User', {
+                    id: res.data.id, admin: false
+                })
 
         }).catch((error) => {
             console.log(error)
@@ -56,7 +73,6 @@ function loginScreen({ navigation }) {
             />
             <View style={styles.buttonRow}>
                 <Button
-                    style={styles.button}
                     title="login"
                     color='#929E69'
                     onPress={handleLogin}
@@ -64,7 +80,7 @@ function loginScreen({ navigation }) {
                 <Button
                     title="create an account"
                     color='#76796c'
-                    onPress={() => navigation.navigate('CreateAccount')}
+                    onPress={() => navigation.navigate('CreateAccount', { admin: false })}
                 />
             </View>
         </View >

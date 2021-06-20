@@ -1,13 +1,10 @@
-
 import React from 'react';
-
 import 'react-native-gesture-handler';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import allSpeciesScreen from '../allSpeciesScreen';
 import speciesScreen from '../../individualScreens/speciesScreen';
 import createSpeciesScreen from '../../createScreens/createSpeciesScreen';
-
 
 export default function allSpeciesNavigator() {
 

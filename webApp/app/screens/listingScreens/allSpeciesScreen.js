@@ -1,9 +1,10 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { useState, useEffect } from 'react';
-import { Text, StyleSheet, View, FlatList, TextInput, TouchableOpacity } from 'react-native';
+import { Text, StyleSheet, View, FlatList, TextInput } from 'react-native';
 import axios from "axios";
 
 export default function allSpeciesScreen({ navigation }) {
+
     const [data, setData] = useState("");
     const [filteredData, setFilteredData] = useState("");
     const [search, setSearch] = useState("");
@@ -119,9 +120,6 @@ const styles = StyleSheet.create({
     },
     addText: {
         paddingLeft: 20
-    },
-    textContainer: {
-        backgroundColor: "pink"
     },
     list: {
         marginTop: 50,

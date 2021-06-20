@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { Text, StyleSheet, View, FlatList } from 'react-native';
 import axios from "axios";
 function homeScreen({ navigation }) {
+
     const [users, setUsers] = useState("");
     const [animalia, setAnimalia] = useState("");
     const [plantae, setPlantae] = useState("");
@@ -62,19 +63,19 @@ function homeScreen({ navigation }) {
                 <FlatList
                     data={plantae}
                     renderItem={renderItem}
-                    keyExtractor={item => item.id}
+                    keyExtractor={item => "" + item.id}
                     style={[styles.plantaeList, styles.lists]}
                 />
                 <FlatList
                     data={animalia}
                     renderItem={renderItem}
-                    keyExtractor={item => item.id}
+                    keyExtractor={item => "" + item.id}
                     style={[styles.animaliaList, styles.lists]}
                 />
                 <FlatList
                     data={chromista}
                     renderItem={renderItem}
-                    keyExtractor={item => item.id}
+                    keyExtractor={item => "" + item.id}
                     style={[styles.chromistaList, styles.lists]}
                 />
 

@@ -4,6 +4,7 @@ import { Text, StyleSheet, View, FlatList, TextInput } from 'react-native';
 import axios from "axios";
 
 export default function accountsScreen({ navigation }) {
+
     const [data, setData] = useState("");
     const [filteredData, setFilteredData] = useState("");
     const [search, setSearch] = useState("");
@@ -43,7 +44,7 @@ export default function accountsScreen({ navigation }) {
     const Item = ({ id, username }) => (
         <View style={styles.row} >
             <Text onPress={() => handleDelete(id)} style={styles.xButton}>x  </Text>
-            <Text onPress={() => navigation.navigate("userScreen", { id: id })} style={styles.listText}>{username} </Text>
+            <Text onPress={() => navigation.navigate("userScreen", { id: id, admin: true })} style={styles.listText}>{username} </Text>
         </View>
     );
 
@@ -68,6 +69,7 @@ export default function accountsScreen({ navigation }) {
                 <StatusBar style="auto" />
                 <View style={styles.header} >
                     <Text style={styles.headerText} > Accounts </Text>
+                    <Text onPress={() => navigation.navigate("createAdminAccountScreen", { admin: true })} style={[styles.headerText, styles.addText]}>+</Text>
                 </View>
                 <View
                     style={styles.SearchBar}
@@ -99,7 +101,9 @@ const styles = StyleSheet.create({
         backgroundColor: '#e9edc9'
     },
     header: {
+        flexDirection: "row",
         alignItems: "center",
+        justifyContent: "center",
         top: 30,
         borderColor: "#ccd5ae",
         backgroundColor: "#ccd5ae",
@@ -109,11 +113,13 @@ const styles = StyleSheet.create({
         borderRadius: 10
     }
     , headerText: {
-
         fontSize: 25,
         fontStyle: "italic",
         color: "#5D534F",
         fontWeight: "bold"
+    },
+    addText: {
+        paddingLeft: 20
     },
     list: {
         marginTop: 50,

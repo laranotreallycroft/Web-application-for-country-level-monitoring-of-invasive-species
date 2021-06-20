@@ -1,12 +1,23 @@
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
-import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
-
-
+import { StyleSheet, View, Text, TouchableOpacity, Button } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function adminScreen({ navigation }) {
 
+    const storeId = async (value) => {
+        try {
+            await AsyncStorage.setItem('Id', value)
+        } catch (e) {
+            // saving error
+        }
+    }
 
+
+    var handleLogout = () => {
+        storeId(0);
+        navigation.navigate("Login")
+    }
 
 
     return (
@@ -51,6 +62,15 @@ export default function adminScreen({ navigation }) {
                 onPress={() => navigation.navigate("SightingRecords")}>
                 <Text style={styles.textStyle}>SIGHTING RECORDS</Text>
             </TouchableOpacity>
+
+            <View style={styles.buttonRow}>
+                <Button
+                    style={styles.button}
+                    title="logout"
+                    color='#929E69'
+                    onPress={handleLogout}
+                />
+            </View>
         </View >
 
     );
@@ -60,6 +80,14 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: '#e9edc9',
         alignItems: "center",
+    }, buttonRow: {
+        marginHorizontal: 70,
+        marginBottom: 20,
+        marginTop: 120,
+        display: "flex",
+        flexDirection: "row",
+        justifyContent: 'space-around'
+
     },
     textContainer: {
         top: 120,

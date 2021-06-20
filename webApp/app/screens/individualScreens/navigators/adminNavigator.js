@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 
 import 'react-native-gesture-handler';
 import { NavigationContainer } from '@react-navigation/native';
@@ -11,11 +11,25 @@ import speciesGroupsNavigator from '../../listingScreens/navigators/speciesGroup
 import countiesNavigator from '../../listingScreens/navigators/countiesNavigator';
 import locationsNavigator from '../../listingScreens/navigators/locationsNavigator';
 import sightingRecordsNavigator from '../../listingScreens/navigators/sightingRecordsNavigator';
+import loginNavigator from '../../loginNavigator';
 
 
-export default function adminNavigator() {
+export default function adminNavigator({ navigation }) {
+
+    useEffect(
+        () =>
+            navigation.addListener('beforeRemove', (e) => {
+
+                // Prevent default behavior of leaving the screen
+                e.preventDefault();
+
+            }),
+        []
+    );
 
     const Stack = createStackNavigator();
+
+
     return (
         <NavigationContainer independent={true}>
             <Stack.Navigator screenOptions={{
@@ -29,6 +43,8 @@ export default function adminNavigator() {
                 <Stack.Screen name="Counties" component={countiesNavigator} />
                 <Stack.Screen name="Locations" component={locationsNavigator} />
                 <Stack.Screen name="SightingRecords" component={sightingRecordsNavigator} />
+
+                <Stack.Screen name="Login" component={loginNavigator} />
             </Stack.Navigator>
         </NavigationContainer>
 

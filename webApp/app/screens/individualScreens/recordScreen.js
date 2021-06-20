@@ -1,10 +1,11 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { useState, useEffect } from 'react';
-import { Text, StyleSheet, View, Image, ScrollView, TextInput } from 'react-native';
+import { Text, StyleSheet, View, Image, ScrollView } from 'react-native';
 import axios from "axios";
-
 import MapView, { Marker } from 'react-native-maps';
+
 export default function RecordScreen({ route, navigation }) {
+
     const { recordId } = route.params;
     const [data, setData] = useState("");
 

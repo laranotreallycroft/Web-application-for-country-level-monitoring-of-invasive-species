@@ -25,6 +25,9 @@ public class Account implements Serializable {
 
 	private String username;
 
+	@Column(name = "role_admin")
+	private boolean roleAdmin;
+
 	// bi-directional many-to-one association to Record
 	@OneToMany(mappedBy = "account")
 	@JsonBackReference
@@ -33,11 +36,11 @@ public class Account implements Serializable {
 	public Account() {
 	}
 
-	public Account(Integer userId, String username, String password) {
+	public Account(Integer userId, String username, String password, boolean roleAdmin) {
 		this.userId = userId;
 		this.username = username;
 		this.password = password;
-
+		this.roleAdmin = roleAdmin;
 	}
 
 	public Integer getUserId() {
@@ -62,6 +65,14 @@ public class Account implements Serializable {
 
 	public void setUsername(String username) {
 		this.username = username;
+	}
+	
+	public boolean getRoleAdmin() {
+		return this.roleAdmin;
+	}
+
+	public void setRoleAdmin(boolean roleAdmin) {
+		this.roleAdmin = roleAdmin;
 	}
 
 	public List<SightingRecord> getRecords() {
