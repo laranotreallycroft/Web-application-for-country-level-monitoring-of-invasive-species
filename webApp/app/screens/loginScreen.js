@@ -34,7 +34,6 @@ function loginScreen({ navigation }) {
             username: username,
             password: password
         };
-        console.log(user_object)
         axios.post("http://10.0.2.2:8080/login", user_object).then(res => {
             storeId(res.data.id);
             alert("Authentication success");
@@ -88,7 +87,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#e9edc9',
-        justifyContent: 'flex-end'
+        justifyContent: 'center'
     },
     buttonRow: {
         marginHorizontal: 70,

@@ -1,19 +1,21 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { useState, useEffect } from 'react';
-import { Text, StyleSheet, View, FlatList, TextInput } from 'react-native';
+import { Text, StyleSheet, View, FlatList, TextInput, TouchableOpacity } from 'react-native';
 import axios from "axios";
+import Dialog, { DialogContent, DialogTitle, DialogFooter, DialogButton } from 'react-native-popup-dialog';
 
 export default function allSpeciesScreen({ navigation }) {
 
     const [data, setData] = useState("");
     const [filteredData, setFilteredData] = useState("");
     const [search, setSearch] = useState("");
+    const [itemToBeDeleted, setItemToBeDeleted] = useState(null);
 
     useEffect(() => {
 
         axios.get("http://10.0.2.2:8080/species/getAll").then(res => {
             setData(res.data)
-            setFilteredData(res.data)
+            setFilteredData(null)
             setSearch("")
 
         }).catch(() => {
@@ -22,13 +24,14 @@ export default function allSpeciesScreen({ navigation }) {
 
     }, []);
 
-    const handleDelete = (id) => {
-        alert("Deleting species")
-        const payload = { id: id }
+    const handleDelete = () => {
+        const payload = { id: itemToBeDeleted }
+        setItemToBeDeleted(null)
+
         axios.post("http://10.0.2.2:8080/species/delete", payload).then(res => {
             axios.get("http://10.0.2.2:8080/species/getAll").then(res => {
                 setData(res.data)
-                setFilteredData(res.data)
+                setFilteredData(null)
                 setSearch("")
             }).catch((error) => {
                 alert("Failed to get species data");
@@ -42,10 +45,11 @@ export default function allSpeciesScreen({ navigation }) {
     }
 
     const Item = ({ id, name }) => (
-        <View style={styles.row} >
-            <Text onPress={() => handleDelete(id)} style={styles.xButton}>x  </Text>
-            <Text onPress={() => navigation.navigate("Species", { speciesId: id })} style={styles.listText}>{name} </Text>
-        </View>
+        <TouchableOpacity style={styles.row}
+            onPress={() => navigation.navigate("Species", { speciesId: id })}
+            onLongPress={() => setItemToBeDeleted(id)}>
+            <Text style={styles.listText}>{name} </Text>
+        </TouchableOpacity>
     );
 
 
@@ -54,16 +58,57 @@ export default function allSpeciesScreen({ navigation }) {
     );
 
     const handleSearch = text => {
-        const formattedQuery = text.toLowerCase();
-        const filteredData = data.filter((item) => item.name.toLowerCase().includes(formattedQuery)).map(({ id, name }) => ({ id, name }));
-        setFilteredData(filteredData);
-        setSearch(text);
+        if (text == "") {
+            setFilteredData(null);
+            setSearch(text);
+        }
+        else {
+            const formattedQuery = text.toLowerCase();
+            const filteredData = data.filter((item) => item.name.toLowerCase().includes(formattedQuery)).map(({ id, name }) => ({ id, name }));
+            setFilteredData(filteredData);
+            setSearch(text);
+        }
     };
 
 
     if (data != null)
         return (
             <View style={styles.container}>
+
+                <Dialog
+                    visible={itemToBeDeleted != null}
+                    dialogTitle={
+                        <DialogTitle
+                            title="Deleting species"
+                            hasTitleBar={false}
+                            align="left"
+                        />
+                    }
+                    footer={
+                        <DialogFooter>
+                            <DialogButton
+                                text="CANCEL"
+                                bordered
+                                onPress={() => {
+                                    setItemToBeDeleted(null);
+                                }}
+                                key="button-1"
+                            />
+                            <DialogButton
+                                text="OK"
+                                bordered
+                                onPress={() => {
+                                    handleDelete();
+
+                                }}
+                                key="button-2"
+                            />
+                        </DialogFooter>
+                    }>
+                    <DialogContent>
+                        <Text  > Are you sure you want to delete this species? </Text>
+                    </DialogContent>
+                </Dialog>
 
                 <StatusBar style="auto" />
                 <View style={styles.header} >

@@ -56,8 +56,6 @@ const styles = StyleSheet.create({
     scroll: {
         top: 60,
     },
-
-
     textContainer: {
         display: "flex",
         flexDirection: "row",
@@ -67,24 +65,24 @@ const styles = StyleSheet.create({
         padding: 0,
         borderWidth: 20,
         borderRadius: 20,
-        alignItems: "center"
+        flexWrap: 'wrap'
     },
     text: {
-        paddingRight: 100,
         fontSize: 16,
+        alignSelf: "center"
     },
     textTitle: {
+        alignSelf: "flex-start",
         fontSize: 20,
         fontWeight: "bold",
         fontStyle: "italic",
         marginRight: 10
     },
     image: {
-        marginTop: 20,
-        marginBottom: 20,
-        width: 400,
-        height: 300,
-        resizeMode: 'contain'
+        margin: 12,
+        marginBottom: 70,
+        width: 370,
+        height: 370,
     }
 });
 

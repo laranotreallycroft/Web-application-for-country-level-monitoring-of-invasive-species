@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
+import javax.persistence.EntityManager;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import hr.fer.zavrsni.webApp.dao.AccountRepository;
 import hr.fer.zavrsni.webApp.dao.LocationRepository;
+import hr.fer.zavrsni.webApp.dao.SightingRecordRepository;
 import hr.fer.zavrsni.webApp.model.Account;
 import hr.fer.zavrsni.webApp.model.SightingRecord;
 import net.minidev.json.JSONArray;
@@ -31,6 +34,9 @@ public class AccountController {
 	@Autowired
 	private LocationRepository locationRepository;
 
+	@Autowired
+	private SightingRecordRepository sightingRecordRepository;
+
 	@GetMapping("/account/getAll")
 	public List<Map<String, Object>> getAccounts() {
 		List<Map<String, Object>> response = new ArrayList<>();
@@ -43,7 +49,7 @@ public class AccountController {
 			response.add(accountMap);
 
 		}
-		response.sort((o1, o2) -> ((String) o2.get("username")).compareTo((String) o2.get("username")));
+		response.sort((o1, o2) -> ((Integer) o2.get("id")) - (Integer) o2.get("id"));
 
 		return response;
 	}
@@ -102,6 +108,9 @@ public class AccountController {
 			response.put("message", "Invalid account id.");
 			return response;
 		}
+
+		for (SightingRecord record : account.getRecords())
+			sightingRecordRepository.delete(record);
 
 		accountRepository.delete(account);
 

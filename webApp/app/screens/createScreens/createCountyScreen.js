@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { Button, StyleSheet, TextInput, View } from 'react-native';
 import axios from "axios";
 
-export default function createCountyScreen(props) {
+export default function createCountyScreen({ navigation }) {
 
     const [countyName, setCounty] = useState("");
 
@@ -20,9 +20,9 @@ export default function createCountyScreen(props) {
         };
 
 
-        axios.post(endpoint, species_object).then(res => {
+        axios.post(endpoint, county_object).then(res => {
             alert("County create success");
-
+            navigation.goBack()
         }).catch((error) => {
             console.log(error)
             alert("County create failure! County with this name already exists!");
@@ -56,7 +56,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#e9edc9',
-        justifyContent: 'flex-end'
+        justifyContent: 'center'
     },
     buttonRow: {
         marginHorizontal: 70,

@@ -47,13 +47,9 @@ public class RecordController {
 			Map<String, Object> recordMap = new HashMap<>();
 
 			recordMap.put("id", sightingRecord.getRecordId());
-			recordMap.put("description", sightingRecord.getDescription());
-			recordMap.put("coordinates", sightingRecord.getLocationCoordinates() == null ? null
-					: sightingRecord.getLocationCoordinates().toString());
-			recordMap.put("locationDescription", sightingRecord.getLocationDescription());
-			recordMap.put("location", sightingRecord.getLocationId().toString());
-			recordMap.put("speciesId", sightingRecord.getSpecies().getSpeciesId());
-			recordMap.put("userId", sightingRecord.getUser() == null ? null : sightingRecord.getUser().getUserId());
+			recordMap.put("location", locationRepository.findByLocationId(sightingRecord.getLocationId()).getName());
+			recordMap.put("species", sightingRecord.getSpecies().getShortenedSpeciesName());
+			recordMap.put("username", sightingRecord.getUser() == null ? null : sightingRecord.getUser().getUsername());
 
 			response.add(recordMap);
 		}
@@ -130,7 +126,7 @@ public class RecordController {
 		SightingRecord newSightingRecord = new SightingRecord(lastId + 1, postObj.get("description").toString(), pt,
 				postObj.get("locationDescription").toString(),
 				locationRepository.findByName(postObj.get("location").toString()),
-				postObj.get("photograph").toString().getBytes(),
+				postObj.get("photograph"),
 				speciesRepository.findBySpeciesName(postObj.get("species").toString()), account);
 		sightingRecordRepository.save(newSightingRecord);
 		response.put("message", "Sighting record successfully created.");

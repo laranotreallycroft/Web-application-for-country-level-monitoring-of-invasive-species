@@ -52,8 +52,8 @@ public class SpeciesController {
 		return response;
 	}
 
-	@GetMapping("/species/getTop50")
-	public List<JSONArray> getTop50Species() {
+	@GetMapping("/species/getTop5")
+	public List<JSONArray> getTop5Species() {
 		List<JSONArray> response = new ArrayList<>();
 		List<Species> plantaeList = new LinkedList<>();
 		List<Species> animaliaList = new LinkedList<>();
@@ -67,7 +67,7 @@ public class SpeciesController {
 		JSONArray plantaeJsonArary = new JSONArray();
 		JSONArray animaliaJsonArary = new JSONArray();
 		JSONArray chromistaJsonArary = new JSONArray();
-		for (int i = 0; i < 50; i++) {
+		for (int i = 0; i < 5; i++) {
 
 			if (plantaeList.size() > i && plantaeList.get(i).getRecords().size() > 0) {
 				JSONObject plantaeJson = new JSONObject();
@@ -140,9 +140,9 @@ public class SpeciesController {
 			response.put("message", "Invalid species id.");
 			return response;
 		}
-		for (SightingRecord record : species.getRecords()) {
+		for (SightingRecord record : species.getRecords()) 
 			sightingRecordRepository.delete(record);
-		}
+		
 		speciesRepository.delete(species);
 
 		response.put("message", "Species successfully deleted.");
@@ -172,27 +172,5 @@ public class SpeciesController {
 		response.put("message", "Species successfully created.");
 		return response;
 	}
-	/*
-	 * 
-	 * @PostMapping("/species/edit") public Map<String, String>
-	 * editSpecies(@RequestParam("id") UUID id) { Map<String, String> response = new
-	 * HashMap<>();
-	 * 
-	 * Optional<Species> species;
-	 * 
-	 * try { species = speciesRepository.findById(id); } catch
-	 * (NoSuchElementException | IllegalArgumentException ex) {
-	 * response.put("message", "Ne postoji mjesto sa predanim imenom");
-	 * 
-	 * return response; }
-	 * 
-	 * try { // species.setName(name); // species.setCounty(county); //
-	 * speciesRepository.save(species); } catch (Exception e) {
-	 * response.put("message", "Promijenjeni podatci nisu ispravni!"); return
-	 * response; }
-	 * 
-	 * response.put("message", "Mjesto uspješno izmjenjeno!");
-	 * 
-	 * return response; }
-	 */
+	
 }

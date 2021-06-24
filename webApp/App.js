@@ -38,7 +38,6 @@ export default function App() {
         <Drawer.Screen name="Animals (Animalia)" component={animaliaNavigator} />
         <Drawer.Screen name="Algae (Chromista)" component={chromistaNavigator} />
         <Drawer.Screen name="Account" component={loginNavigator} />
-
         <Drawer.Screen name="Report Sighting" component={createSightingRecordScreen} />
       </Drawer.Navigator>
 

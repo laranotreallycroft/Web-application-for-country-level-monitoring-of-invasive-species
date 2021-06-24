@@ -76,9 +76,7 @@ export default function RecordScreen({ route, navigation }) {
 }
 const styles = StyleSheet.create({
     container: {
-
         flex: 1,
-        alignItems: 'stretch',
         backgroundColor: '#e9edc9'
     },
     scroll: {
@@ -93,24 +91,24 @@ const styles = StyleSheet.create({
         padding: 0,
         borderWidth: 20,
         borderRadius: 20,
-        alignItems: "center"
+        flexWrap: 'wrap'
     },
     text: {
-        paddingRight: 130,
         fontSize: 16,
+        alignSelf: "center"
     },
     textTitle: {
+        alignSelf: "flex-start",
         fontSize: 20,
         fontWeight: "bold",
         fontStyle: "italic",
         marginRight: 10
     },
     image: {
-        marginTop: 20,
-        marginBottom: 80,
-        width: 400,
-        height: 300,
-        resizeMode: 'contain'
+        margin: 12,
+        marginBottom: 70,
+        width: 370,
+        height: 370,
     }, map: {
         height: 200
     }

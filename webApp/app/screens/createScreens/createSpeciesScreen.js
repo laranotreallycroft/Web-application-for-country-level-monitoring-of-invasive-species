@@ -5,7 +5,7 @@ import { Picker } from '@react-native-picker/picker';
 import axios from "axios";
 import * as ImagePicker from 'expo-image-picker';
 
-export default function createSpeciesScreen(props) {
+export default function createSpeciesScreen({ navigation }) {
 
     const [speciesName, setSpeciesName] = useState("");
     const [speciesGroup, setSpeciesGroup] = useState("");
@@ -19,11 +19,9 @@ export default function createSpeciesScreen(props) {
     useEffect(() => {
         const endpoint = "http://10.0.2.2:8080/speciesGroup/getAll";
         axios.get(endpoint).then(res => {
-            console.log(res.data)
             setSpeciesGroupData(res.data)
 
         }).catch((error) => {
-            console.log(error)
             alert("Data get failure");
         });
 
@@ -93,7 +91,7 @@ export default function createSpeciesScreen(props) {
 
         axios.post(endpoint, species_object).then(res => {
             alert("Species create success");
-
+            navigation.goBack()
         }).catch((error) => {
             console.log(error)
             alert("Species create failure! Species with this name already exists!");
@@ -106,23 +104,29 @@ export default function createSpeciesScreen(props) {
         <View style={styles.container}>
             <StatusBar style="auto" />
 
+            <Text style={styles.pickerTitle}>Species group</Text>
+            <View
+                style={styles.input}>
+                <Picker
+
+                    prompt="Species group"
+                    selectedValue={speciesGroup}
+                    style={styles.picker}
+                    onValueChange={(itemValue, itemIndex) => setSpeciesGroup(itemValue)}
+                >
+                    {
+                        speciesGroupData.map((prop, key) => {
+                            return <Picker.Item label={prop.name} value={prop.name} key={prop.id} />;
+                        })
+                    }
+                </Picker>
+            </View>
             <TextInput
                 style={styles.input}
                 placeholder="Species name"
                 onChangeText={setSpeciesName}
             />
-            <Picker
-                prompt="Species group"
-                selectedValue={speciesGroup}
-                style={styles.picker}
-                onValueChange={(itemValue, itemIndex) => setSpeciesGroup(itemValue)}
-            >
-                {
-                    speciesGroupData.map((prop, key) => {
-                        return <Picker.Item label={prop.name} value={prop.name} key={prop.id} />;
-                    })
-                }
-            </Picker>
+
             <TextInput
                 style={styles.input}
                 placeholder="Description"
@@ -152,7 +156,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#e9edc9',
-        justifyContent: 'flex-end'
+        justifyContent: 'center'
     },
     chooseImage: {
         alignSelf: 'center',
@@ -190,6 +194,16 @@ const styles = StyleSheet.create({
         fontSize: 15
     },
     picker: {
+        left: - 20,
+        top: 23,
         height: 50,
+        width: 360
+
+    },
+    pickerTitle: {
+        left: 15,
+        fontSize: 15,
+        fontWeight: "bold",
+        color: "#717B50"
     }
 });

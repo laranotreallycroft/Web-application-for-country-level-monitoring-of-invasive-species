@@ -87,7 +87,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#e9edc9',
-        justifyContent: 'flex-end'
+        justifyContent: 'center'
     },
     buttonRow: {
         marginHorizontal: 70,

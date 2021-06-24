@@ -1,18 +1,21 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { useState, useEffect } from 'react';
-import { Text, StyleSheet, View, FlatList, TextInput } from 'react-native';
+import { Text, StyleSheet, View, FlatList, TextInput, TouchableOpacity } from 'react-native';
 import axios from "axios";
+import Dialog, { DialogContent, DialogTitle, DialogFooter, DialogButton } from 'react-native-popup-dialog';
 
 export default function sightingRecordsScreen({ navigation }) {
 
     const [data, setData] = useState("");
     const [filteredData, setFilteredData] = useState("");
     const [search, setSearch] = useState("");
+    const [itemToBeDeleted, setItemToBeDeleted] = useState(null);
+
     useEffect(() => {
 
         axios.get("http://10.0.2.2:8080/record/getAll").then(res => {
             setData(res.data)
-            setFilteredData(res.data)
+            setFilteredData(null)
             setSearch("")
         }).catch((error) => {
             console.log(error)
@@ -20,12 +23,14 @@ export default function sightingRecordsScreen({ navigation }) {
         });
 
     }, []);
-    const handleDelete = (id) => {
-        const payload = { id: id }
+    const handleDelete = () => {
+        const payload = { id: itemToBeDeleted }
+        setItemToBeDeleted(null);
+
         axios.post("http://10.0.2.2:8080/record/delete", payload).then(res => {
             axios.get("http://10.0.2.2:8080/record/getAll").then(res => {
                 setData(res.data)
-                setFilteredData(res.data)
+                setFilteredData(null)
                 setSearch("")
 
             }).catch((error) => {
@@ -40,30 +45,76 @@ export default function sightingRecordsScreen({ navigation }) {
 
     }
 
-    const Item = ({ id }) => (
-        <View style={styles.row} >
-            <Text onPress={() => handleDelete(id)} style={styles.xButton}>x  </Text>
-            <Text onPress={() => navigation.navigate("SightingRecord", { recordId: id })} style={styles.listText}>{id} </Text>
-        </View>
+    const Item = ({ id, location, species, username }) => (
+        <TouchableOpacity
+            style={styles.row}
+            onPress={() => navigation.navigate("SightingRecord", { recordId: id })}
+            onLongPress={() => setItemToBeDeleted(id)}>
+            <Text style={styles.listText}>{species} - {location} - {username}</Text>
+        </TouchableOpacity>
     );
 
 
     var renderItem = ({ item }) => (
-        <Item id={item.id} />
+        <Item id={item.id} location={item.location} species={item.species} username={item.username} />
     );
 
 
     const handleSearch = text => {
-        const formattedQuery = text.toLowerCase();
-        const filteredData = data.filter((item) => item.name.toLowerCase().includes(formattedQuery)).map(({ name }) => ({ name }));
-        setFilteredData(filteredData);
-        setSearch(text);
+        if (text == "") {
+            setFilteredData(null);
+            setSearch(text);
+        } else {
+            const formattedQuery = text.toLowerCase();
+            const filteredData = data.filter((item) =>
+                item.location.toLowerCase().includes(formattedQuery) ||
+                item.species.toLowerCase().includes(formattedQuery) ||
+                item.username != null && item.username.toLowerCase().includes(formattedQuery))
+                .map(({ id, location, species, username }) => ({ id, location, species, username }));
+            setFilteredData(filteredData);
+            setSearch(text);
+        }
     };
 
 
     if (data != null)
         return (
             <View style={styles.container}>
+
+                <Dialog
+                    visible={itemToBeDeleted != null}
+                    dialogTitle={
+                        <DialogTitle
+                            title="Deleting sighting record"
+                            hasTitleBar={false}
+                            align="left"
+                        />
+                    }
+                    footer={
+                        <DialogFooter>
+                            <DialogButton
+                                text="CANCEL"
+                                bordered
+                                onPress={() => {
+                                    setItemToBeDeleted(null);
+                                }}
+                                key="button-1"
+                            />
+                            <DialogButton
+                                text="OK"
+                                bordered
+                                onPress={() => {
+                                    handleDelete();
+
+                                }}
+                                key="button-2"
+                            />
+                        </DialogFooter>
+                    }>
+                    <DialogContent>
+                        <Text  > Are you sure you want to delete this sighting record? </Text>
+                    </DialogContent>
+                </Dialog>
 
                 <StatusBar style="auto" />
                 <View style={styles.header} >

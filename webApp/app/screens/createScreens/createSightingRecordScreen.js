@@ -7,9 +7,8 @@ import axios from "axios";
 import * as ImagePicker from 'expo-image-picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-export default function createSightingRecordScreen(props) {
+export default function createSightingRecordScreen({ navigation }) {
 
-    const [userId, setUserId] = useState("");
     const [description, setDescription] = useState("");
     const [photograph, setPhotograph] = useState("");
     const [galleryPermission, setGalleryPermission] = useState(null);
@@ -52,16 +51,7 @@ export default function createSightingRecordScreen(props) {
 
     }, []);
 
-    const getUserId = async () => {
-        try {
-            const value = await AsyncStorage.getItem('@Id')
-            if (value !== null) {
-                setUserId(value)
-            }
-        } catch (e) {
-            // error reading value
-        }
-    }
+
 
 
 
@@ -140,9 +130,13 @@ export default function createSightingRecordScreen(props) {
 
 
 
-    const handleCreateSightingRecord = () => {
+    const handleCreateSightingRecord = async () => {
 
-        getUserId()
+        const userId = await AsyncStorage.getItem('@Id')
+
+
+
+
         if (species == "") {
             alert("Species cannot be empty!")
             return
@@ -177,11 +171,10 @@ export default function createSightingRecordScreen(props) {
             coordinatesLon: marker.longitude
         };
 
-
-
-
         axios.post(endpoint, species_object).then(res => {
             alert("Sighting record create success!");
+            if (userId == null) navigation.navigate("Home")
+            else navigation.navigate("Account")
 
         }).catch((error) => {
             console.log(error)
@@ -212,53 +205,71 @@ export default function createSightingRecordScreen(props) {
                 <Text style={styles.textStyle}>Choose Image</Text>
             </TouchableOpacity>
 
-            <Picker
-                prompt="Species group"
-                style={{ height: 50 }}
-                onValueChange={(itemValue, itemIndex) => handleSelectSpeciesGroup(itemValue)}
-            >
-                {
-                    speciesGroupData.map((prop, key) => {
-                        return <Picker.Item label={prop.name} value={prop.name} key={prop.id} />;
-                    })
-                }
-            </Picker>
-            <Picker
-                prompt="Species"
-                selectedValue={species}
-                style={{ height: 50 }}
-                onValueChange={(itemValue, itemIndex) => setSpecies(itemValue)}
-            >
-                {
-                    speciesData.map((prop, key) => {
-                        return <Picker.Item label={prop.name} value={prop.name} key={prop.id} />;
-                    })
-                }
-            </Picker>
-            <Picker
-                prompt="County"
-                style={{ height: 50 }}
-                onValueChange={(itemValue, itemIndex) => handleSelectCounty(itemValue)}
-            >
-                {
-                    countyData.map((prop, key) => {
-                        return <Picker.Item label={prop.name} value={prop.name} key={prop.id} />;
-                    })
-                }
-            </Picker>
+            <Text style={styles.pickerTitle}>Species group</Text>
+            <View
+                style={styles.inputPicker}>
+                <Picker
+                    prompt="Species group"
+                    style={styles.picker}
+                    onValueChange={(itemValue, itemIndex) => handleSelectSpeciesGroup(itemValue)}
+                >
+                    {
+                        speciesGroupData.map((prop, key) => {
+                            return <Picker.Item label={prop.name} value={prop.name} key={prop.id} />;
+                        })
+                    }
+                </Picker>
+            </View>
 
-            <Picker
-                prompt="Location"
-                selectedValue={location}
-                style={{ height: 50 }}
-                onValueChange={(itemValue, itemIndex) => setLocation(itemValue)}
-            >
-                {
-                    locationData.map((prop, key) => {
-                        return <Picker.Item label={prop.name} value={prop.name} key={prop.id} />;
-                    })
-                }
-            </Picker>
+            <Text style={styles.pickerTitle}>Species</Text>
+            <View
+                style={styles.inputPicker}>
+                <Picker
+                    prompt="Species"
+                    selectedValue={species}
+                    style={styles.picker}
+                    onValueChange={(itemValue, itemIndex) => setSpecies(itemValue)}
+                >
+                    {
+                        speciesData.map((prop, key) => {
+                            return <Picker.Item label={prop.name} value={prop.name} key={prop.id} />;
+                        })
+                    }
+                </Picker>
+            </View>
+
+            <Text style={styles.pickerTitle}>County</Text>
+            <View
+                style={styles.inputPicker}>
+                <Picker
+                    prompt="County"
+                    style={styles.picker}
+                    onValueChange={(itemValue, itemIndex) => handleSelectCounty(itemValue)}
+                >
+                    {
+                        countyData.map((prop, key) => {
+                            return <Picker.Item label={prop.name} value={prop.name} key={prop.id} />;
+                        })
+                    }
+                </Picker>
+            </View>
+
+            <Text style={styles.pickerTitle}>Location</Text>
+            <View
+                style={styles.inputPicker}>
+                <Picker
+                    prompt="Location"
+                    selectedValue={location}
+                    style={styles.picker}
+                    onValueChange={(itemValue, itemIndex) => setLocation(itemValue)}
+                >
+                    {
+                        locationData.map((prop, key) => {
+                            return <Picker.Item label={prop.name} value={prop.name} key={prop.id} />;
+                        })
+                    }
+                </Picker>
+            </View>
 
             <MapView style={styles.map} initialRegion={{
                 latitude: 45.1,
@@ -308,9 +319,30 @@ const styles = StyleSheet.create({
         borderWidth: 15,
         borderRadius: 20,
         fontSize: 15
+    }, inputPicker: {
+        justifyContent: 'flex-end',
+        height: 30,
+        borderWidth: 1,
+        backgroundColor: "#ccd5ae",
+        borderColor: "#ccd5ae",
+        margin: 8,
+        padding: 10,
+        borderWidth: 10,
+        borderRadius: 18,
+        fontSize: 15
     },
     picker: {
+        left: - 20,
+        top: 23,
         height: 50,
+        width: 360
+
+    },
+    pickerTitle: {
+        left: 15,
+        fontSize: 15,
+        fontWeight: "bold",
+        color: "#717B50"
     },
     map: {
         height: 200

@@ -3,25 +3,33 @@ import React, { useState, useEffect } from 'react';
 import { Text, StyleSheet, View, ScrollView, FlatList, Button } from 'react-native';
 import axios from "axios";
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useFocusEffect } from '@react-navigation/native';
+import { useIsFocused } from '@react-navigation/native';
 
-export default function userScreen({ route, navigation }) {
+export default function userScreen({ props, route, navigation }) {
 
     const { id, admin } = route.params;
 
     const [data, setData] = useState("");
 
-    useEffect(() => {
-
-        const payload = { id: id }
-        axios.post("http://10.0.2.2:8080/account/getOne", payload).then(res => {
-
+    const getRequest = () => axios.post("http://10.0.2.2:8080/account/getOne", { id: id }).then(res => {
+        if (data != res.data) {
             setData(res.data);
+        }
+    }).catch(() => {
+        alert("Failed to get account");
+    });
 
-        }).catch(() => {
-            alert("Failed to get account");
-        });
 
-    }, []);
+
+    useFocusEffect(
+        //alert here
+        React.useCallback(() => {
+            getRequest()
+        }, [data])
+    );
+
+
 
     var removeId = async () => {
         try {
@@ -68,20 +76,20 @@ export default function userScreen({ route, navigation }) {
                         <Text style={styles.textTitle}>Sighting count: </Text>
                         <Text style={styles.text}>{data.recordCount} </Text>
                     </View>
-                    <View style={styles.list}>
+                    <View style={[styles.list, styles.sightings]}>
                         <Text style={styles.textTitle}>Your sightings: </Text>
-                        <View>
-                            <View style={styles.flex}>
-                                <Text style={styles.textTitle2}> Species</Text>
-                                <Text style={styles.textTitle2}> Location</Text>
-                            </View>
-                            <FlatList
-                                data={data.records}
-                                renderItem={renderItem}
-                                keyExtractor={item => "" + item.id}
 
-                            />
+                        <View style={styles.flex}>
+                            <Text style={styles.textTitle2}> Species</Text>
+                            <Text style={styles.textTitle2}> Location</Text>
                         </View>
+                        <FlatList
+                            data={data.records}
+                            renderItem={renderItem}
+                            keyExtractor={item => "" + item.id}
+
+                        />
+
                     </View>
                     {admin == false &&
                         <View style={styles.buttonRow}>
@@ -122,7 +130,18 @@ const styles = StyleSheet.create({
         padding: 0,
         borderWidth: 20,
         borderRadius: 20,
-        alignItems: "center"
+        flexWrap: 'wrap'
+    },
+    text: {
+        fontSize: 16,
+        alignSelf: "center"
+    },
+    textTitle: {
+        alignSelf: "flex-start",
+        fontSize: 20,
+        fontWeight: "bold",
+        fontStyle: "italic",
+        marginRight: 10
     }, buttonRow: {
         marginHorizontal: 70,
         marginBottom: 20,
@@ -132,16 +151,7 @@ const styles = StyleSheet.create({
         justifyContent: 'space-around'
 
     },
-    text: {
-        paddingRight: 100,
-        fontSize: 16,
-    },
-    textTitle: {
-        fontSize: 20,
-        fontWeight: "bold",
-        fontStyle: "italic",
-        marginRight: 10
-    },
+
     textTitle2: {
         fontSize: 15,
         fontWeight: "bold",
@@ -157,8 +167,8 @@ const styles = StyleSheet.create({
         borderWidth: 20,
         borderRadius: 20
     },
-    flatList: {
-
+    sightings: {
+        maxHeight: 450
     }
 
 });

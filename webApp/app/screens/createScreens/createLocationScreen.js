@@ -1,10 +1,10 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { useState, useEffect } from 'react';
-import { Button, StyleSheet, TextInput, View } from 'react-native';
+import { Button, StyleSheet, TextInput, View, Text } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import axios from "axios";
 
-export default function createLocationScreen(props) {
+export default function createLocationScreen({ navigation }) {
 
     const [locationName, setLocationName] = useState("");
     const [county, setcounty] = useState("");
@@ -51,7 +51,7 @@ export default function createLocationScreen(props) {
 
         axios.post(endpoint, location_object).then(res => {
             alert("Location create success");
-
+            navigation.goBack()
         }).catch((error) => {
             console.log(error)
             alert("Location create failure! Location with this name already exists!");
@@ -64,23 +64,29 @@ export default function createLocationScreen(props) {
         <View style={styles.container}>
             <StatusBar style="auto" />
 
+
+            <Text style={styles.pickerTitle}>Species group</Text>
+            <View
+                style={styles.input}>
+                <Picker
+                    prompt="County"
+                    selectedValue={countyData}
+                    style={styles.picker}
+                    onValueChange={(itemValue, itemIndex) => setcounty(itemValue)}
+                >
+                    {
+                        countyData.map((prop, key) => {
+                            return <Picker.Item label={prop.name} value={prop.name} key={prop.id} />;
+                        })
+                    }
+                </Picker>
+            </View>
+
             <TextInput
                 style={styles.input}
                 placeholder="Location name"
                 onChangeText={setLocationName}
             />
-            <Picker
-                prompt="County"
-                selectedValue={countyData}
-                style={styles.picker}
-                onValueChange={(itemValue, itemIndex) => setcounty(itemValue)}
-            >
-                {
-                    countyData.map((prop, key) => {
-                        return <Picker.Item label={prop.name} value={prop.name} key={prop.id} />;
-                    })
-                }
-            </Picker>
             <View style={styles.buttonRow}>
                 <Button
                     style={styles.button}
@@ -97,7 +103,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#e9edc9',
-        justifyContent: 'flex-end'
+        justifyContent: 'center'
     },
     buttonRow: {
         marginHorizontal: 70,
@@ -121,6 +127,16 @@ const styles = StyleSheet.create({
         fontSize: 15
     },
     picker: {
+        left: - 20,
+        top: 23,
         height: 50,
+        width: 360
+
+    },
+    pickerTitle: {
+        left: 15,
+        fontSize: 15,
+        fontWeight: "bold",
+        color: "#717B50"
     }
 });

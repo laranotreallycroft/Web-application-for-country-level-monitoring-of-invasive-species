@@ -1,8 +1,13 @@
 package hr.fer.zavrsni.webApp.model;
 
+import java.io.IOException;
 import java.io.Serializable;
+import java.util.Base64;
+
 import javax.persistence.*;
 
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import org.locationtech.jts.geom.Point;
 
 /**
@@ -29,31 +34,42 @@ public class SightingRecord implements Serializable {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "location_id")
+	@OnDelete(action = OnDeleteAction.CASCADE)
 	private Location location;
 
 	private byte[] photograph;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "species_id")
+	@OnDelete(action = OnDeleteAction.CASCADE)
 	private Species species;
 
 	@ManyToOne
 	@JoinColumn(name = "user_id")
+	@OnDelete(action = OnDeleteAction.CASCADE)
 	private Account account;
 
 	public SightingRecord() {
 	}
 
 	public SightingRecord(int recordId, String description, Point locationCoordinates, String locationDescription,
-			Location location, byte[] photograph, Species species,Account account) {
+			Location location, Object photograph, Species species,Account account) {
 		this.recordId=recordId;
 		this.description=description;
 		this.locationCoordinates=locationCoordinates;
 		this.locationDescription=locationDescription;
 		this.location=location;
-		this.photograph=photograph;
 		this.species=species;
 		this.account=account;
+		
+		if(photograph!=null)
+		try {
+			this.photograph = Base64.getDecoder().decode(photograph.toString().getBytes("UTF-8"));
+
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	public Integer getRecordId() {

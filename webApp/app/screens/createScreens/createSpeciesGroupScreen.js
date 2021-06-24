@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { Button, StyleSheet, TextInput, View } from 'react-native';
 import axios from "axios";
 
-export default function createSpeciesGroupScreen(props) {
+export default function createSpeciesGroupScreen({ navigation }) {
 
     const [speciesGroupName, setSpeciesGroupName] = useState("");
 
@@ -22,6 +22,7 @@ export default function createSpeciesGroupScreen(props) {
 
         axios.post(endpoint, species_object).then(res => {
             alert("Species group create success");
+            navigation.goBack()
 
         }).catch((error) => {
             console.log(error)
@@ -43,7 +44,7 @@ export default function createSpeciesGroupScreen(props) {
             <View style={styles.buttonRow}>
                 <Button
                     style={styles.button}
-                    title="Add new species"
+                    title="Add new species group"
                     color='#929E69'
                     onPress={handleCreateSpeciesGroup}
                 />
@@ -56,7 +57,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#e9edc9',
-        justifyContent: 'flex-end'
+        justifyContent: 'center'
     },
     buttonRow: {
         marginHorizontal: 70,

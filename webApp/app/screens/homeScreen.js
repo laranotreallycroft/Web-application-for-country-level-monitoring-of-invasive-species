@@ -14,7 +14,7 @@ function homeScreen({ navigation }) {
 
             setUsers(res.data);
 
-            axios.get("http://10.0.2.2:8080/species/getTop50").then(res => {
+            axios.get("http://10.0.2.2:8080/species/getTop5").then(res => {
 
                 setPlantae(res.data[0]);
                 setAnimalia(res.data[1]);
@@ -44,8 +44,12 @@ function homeScreen({ navigation }) {
     if (chromista[0] != null)
         return (
             <View style={styles.container}>
+
                 <StatusBar style="auto" />
 
+                <View style={styles.header} >
+                    <Text style={styles.headerText} > Leaderboard </Text>
+                </View>
                 <View style={[styles.circle, styles.firstPlace]} >
                     <Text style={styles.medalText}>{users[0].username}</Text>
                     <Text style={styles.medalText}>{users[0].recordCount}</Text>
@@ -59,24 +63,34 @@ function homeScreen({ navigation }) {
                     <Text style={styles.medalText}>{users[2].recordCount}</Text>
                 </View>
 
-
+                <View style={styles.textContainer}>
+                    <Text style={styles.textTitle}>Plants</Text>
+                </View>
                 <FlatList
                     data={plantae}
                     renderItem={renderItem}
                     keyExtractor={item => "" + item.id}
-                    style={[styles.plantaeList, styles.lists]}
+                    style={styles.lists}
                 />
+
+                <View style={styles.textContainer}>
+                    <Text style={styles.textTitle}>Animals</Text>
+                </View>
                 <FlatList
                     data={animalia}
                     renderItem={renderItem}
                     keyExtractor={item => "" + item.id}
-                    style={[styles.animaliaList, styles.lists]}
+                    style={styles.lists}
                 />
+
+                <View style={styles.textContainer}>
+                    <Text style={styles.textTitle}>Algae</Text>
+                </View>
                 <FlatList
                     data={chromista}
                     renderItem={renderItem}
                     keyExtractor={item => "" + item.id}
-                    style={[styles.chromistaList, styles.lists]}
+                    style={styles.lists}
                 />
 
             </View >
@@ -87,7 +101,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         alignItems: 'stretch',
-        justifyContent: 'flex-end',
+        justifyContent: 'flex-start',
         backgroundColor: '#e9edc9'
     }, circle: {
         width: 100,
@@ -96,49 +110,36 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center'
     }, firstPlace: {
-        position: "absolute",
-        top: 35,
+        position: "relative",
+        top: 10,
         left: 150,
         backgroundColor: '#FFEA5F',
     }, secondPlace: {
-        position: "absolute",
-        top: 110,
+        position: "relative",
+        top: -20,
         left: 50,
         backgroundColor: '#DED6CC',
     }, thirdPlace: {
-        position: "absolute",
-        top: 110,
+        position: "relative",
+        top: -120,
         left: 250,
         backgroundColor: '#F8C17E',
     },
     lists: {
-        position: "absolute",
+        top: -100,
         backgroundColor: "#ccd5ae",
         borderColor: "#ccd5ae",
-        margin: 0,
-        padding: 0,
-        borderWidth: 20,
-        borderRadius: 20
-    },
-    plantaeList: {
-        top: 250,
-        left: 20,
-        height: 450,
-        width: 170
-    }, animaliaList: {
-        top: 250,
-        right: 20,
-        height: 330,
-        width: 170
-    }, chromistaList: {
-        top: 590,
-        right: 20,
-        height: 110,
-        width: 170
+        margin: 10,
+        borderWidth: 10,
+        borderRadius: 20,
+        minHeight: 100
     },
     listText: {
         color: "#71625C",
-        fontWeight: "bold"
+        fontWeight: "bold",
+        fontSize: 17,
+        bottom: 6,
+        margin: 2
     },
     medalText: {
         fontWeight: "bold",
@@ -146,8 +147,39 @@ const styles = StyleSheet.create({
     },
     listRow: {
         flexDirection: "row",
-        marginRight: 14
+        marginRight: 14,
+        marginBottom: 5
+    }, header: {
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "center",
+        top: 30,
+        borderColor: "#ccd5ae",
+        backgroundColor: "#ccd5ae",
+        margin: 0,
+        padding: 0,
+        borderWidth: 10,
+        borderRadius: 10,
+        marginBottom: 30
     }
+    , headerText: {
+        fontSize: 25,
+        fontStyle: "italic",
+        color: "#5D534F",
+        fontWeight: "bold"
+    },
+    textContainer: {
+        top: -100,
+        display: "flex",
+        flexDirection: "row",
+        alignSelf: "center"
+    },
+    textTitle: {
+        fontSize: 20,
+        color: "#5D534F",
+        fontWeight: "bold",
+        fontStyle: "italic"
+    },
 });
 
 export default homeScreen;

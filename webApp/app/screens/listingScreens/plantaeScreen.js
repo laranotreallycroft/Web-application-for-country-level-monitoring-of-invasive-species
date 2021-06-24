@@ -16,7 +16,7 @@ export default function plantaeScreen({ navigation }) {
 
         axios.post("http://10.0.2.2:8080/speciesGroup/getSpecies", group_object).then(res => {
             setData(res.data)
-            setFilteredData(res.data)
+            setFilteredData(null)
             setSearch("")
 
         }).catch((error) => {
@@ -37,10 +37,15 @@ export default function plantaeScreen({ navigation }) {
 
 
     const handleSearch = text => {
-        const formattedQuery = text.toLowerCase();
-        const filteredData = data.filter((item) => item.name.toLowerCase().includes(formattedQuery)).map(({ id, name }) => ({ id, name }));
-        setFilteredData(filteredData);
-        setSearch(text);
+        if (text == "") {
+            setFilteredData(null);
+            setSearch(text);
+        } else {
+            const formattedQuery = text.toLowerCase();
+            const filteredData = data.filter((item) => item.name.toLowerCase().includes(formattedQuery)).map(({ id, name }) => ({ id, name }));
+            setFilteredData(filteredData);
+            setSearch(text);
+        }
     };
 
 

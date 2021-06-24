@@ -65,11 +65,10 @@ export default function adminScreen({ navigation }) {
                 <Text style={styles.textStyle}>SIGHTING RECORDS</Text>
             </TouchableOpacity>
 
-            <View style={styles.buttonRow}>
+            <View style={[styles.buttonRow, styles.logout]}>
                 <Button
-                    style={styles.button}
                     title="logout"
-                    color='#929E69'
+                    color='#76796c'
                     onPress={handleLogout}
                 />
             </View>
@@ -105,6 +104,9 @@ const styles = StyleSheet.create({
     textStyle: {
         fontSize: 15,
         color: "white"
+    }
+    , logout: {
+        top: 100
     }
 
 });
