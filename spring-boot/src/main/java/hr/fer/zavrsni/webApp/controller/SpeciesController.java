@@ -7,23 +7,17 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
-import java.util.Optional;
-import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import hr.fer.zavrsni.webApp.dao.SightingRecordRepository;
 import hr.fer.zavrsni.webApp.dao.SpeciesGroupRepository;
 import hr.fer.zavrsni.webApp.dao.SpeciesRepository;
-import hr.fer.zavrsni.webApp.model.Account;
 import hr.fer.zavrsni.webApp.model.SightingRecord;
 import hr.fer.zavrsni.webApp.model.Species;
 import net.minidev.json.JSONArray;
