@@ -5,12 +5,13 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function adminScreen({ navigation }) {
 
-    const storeId = async (value) => {
+    var removeId = async () => {
         try {
-            await AsyncStorage.setItem('Id', value)
+            await AsyncStorage.removeItem('@Id')
         } catch (e) {
-            // saving error
+            // remove error
         }
+
     }
 
 

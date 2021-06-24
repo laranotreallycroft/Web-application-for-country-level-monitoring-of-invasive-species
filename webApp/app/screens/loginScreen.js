@@ -30,15 +30,12 @@ function loginScreen({ navigation }) {
 
     const handleLogin = () => {
 
-        const endpoint = "http://10.0.2.2:8080/login";
-
         const user_object = {
             username: username,
             password: password
         };
-
-
-        axios.post(endpoint, user_object).then(res => {
+        console.log(user_object)
+        axios.post("http://10.0.2.2:8080/login", user_object).then(res => {
             storeId(res.data.id);
             alert("Authentication success");
             if (res.data.role === true)
